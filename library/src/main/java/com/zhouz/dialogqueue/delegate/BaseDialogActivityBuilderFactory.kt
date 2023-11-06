@@ -13,6 +13,13 @@ abstract class BaseDialogActivityBuilderFactory : IBuildFactory<ComponentActivit
     override var mDialog: ComponentActivity? = null
 
     override var mDialogDismissListener: (() -> Unit)? = null
+
+    override val bindActivity: Array<KClass<out Activity>> = arrayOf()
+
+    override val isKeepALive: Boolean = false
+
+    override val dialogPartInterceptors: Array<out IPartInterceptor> = arrayOf()
+
     override fun attachDialogDismiss() {
         mDialog?.lifecycle?.addObserver(this)
     }

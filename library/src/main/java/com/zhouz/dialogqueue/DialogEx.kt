@@ -10,7 +10,6 @@ import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
-import kotlin.reflect.KClass
 
 /**
  * 弹窗队列处理类
@@ -32,7 +31,10 @@ object DialogEx {
         }
     }
 
-    fun addActivityDialog(clazz: KClass<out BaseDialogActivityBuilderFactory>) {
+    /**
+     * 创建保活的activity弹窗构建
+     */
+    fun addActivityDialog(factory: BaseDialogActivityBuilderFactory) {
 
     }
 
@@ -48,6 +50,13 @@ object DialogEx {
     }
 
     /**
+     * 创建保活的view弹窗构建
+     */
+    fun addViewDialog(factory: BaseDialogViewBuilderFactory) {
+
+    }
+
+    /**
      * 创建当前activity的队列弹窗fragmentDialog
      */
     fun addFragmentDialog(builder: suspend () -> DialogFragment) {
@@ -56,6 +65,13 @@ object DialogEx {
                 return builder()
             }
         }
+    }
+
+    /**
+     * 创建保活的fragment弹窗构建
+     */
+    fun addFragmentDialog(factory: BaseDialogFragmentBuilderFactory) {
+
     }
 
     /**
@@ -69,5 +85,11 @@ object DialogEx {
         }
     }
 
+    /**
+     * 创建保活的dialog弹窗构建
+     */
+    fun addCommonDialog(factory: BaseDialogCustomBuilderFactory) {
+
+    }
 
 }

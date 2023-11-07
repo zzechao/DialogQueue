@@ -14,6 +14,16 @@ interface IBuildFactory<T> {
     var mDialog: T?
 
     /**
+     * 优先级
+     */
+    var priority: Int
+
+    /**
+     * dialogId
+     */
+    val dialogId: Int
+
+    /**
      * dismiss的监听
      */
     var mDialogDismissListener: (() -> Unit)?

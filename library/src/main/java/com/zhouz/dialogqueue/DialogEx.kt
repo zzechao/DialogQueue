@@ -10,6 +10,7 @@ import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * 弹窗队列处理类
@@ -35,7 +36,6 @@ object DialogEx {
      * 创建保活的activity弹窗构建
      */
     fun addActivityDialog(factory: BaseDialogActivityBuilderFactory) {
-
     }
 
     /**

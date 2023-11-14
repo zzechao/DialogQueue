@@ -10,7 +10,6 @@ import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * 弹窗队列处理类
@@ -30,12 +29,14 @@ object DialogEx {
                 return builder()
             }
         }
+        DialogQueueActivityDeal.addDialogBuilder(dialogActivityFactory)
     }
 
     /**
      * 创建保活的activity弹窗构建
      */
     fun addActivityDialog(factory: BaseDialogActivityBuilderFactory) {
+        DialogQueueActivityDeal.addDialogBuilder(factory)
     }
 
     /**
@@ -47,13 +48,14 @@ object DialogEx {
                 return builder()
             }
         }
+        DialogQueueActivityDeal.addDialogBuilder(dialogViewFactory)
     }
 
     /**
      * 创建保活的view弹窗构建
      */
     fun addViewDialog(factory: BaseDialogViewBuilderFactory) {
-
+        DialogQueueActivityDeal.addDialogBuilder(factory)
     }
 
     /**
@@ -65,13 +67,14 @@ object DialogEx {
                 return builder()
             }
         }
+        DialogQueueActivityDeal.addDialogBuilder(dialogFragmentFactory)
     }
 
     /**
      * 创建保活的fragment弹窗构建
      */
     fun addFragmentDialog(factory: BaseDialogFragmentBuilderFactory) {
-
+        DialogQueueActivityDeal.addDialogBuilder(factory)
     }
 
     /**
@@ -83,13 +86,14 @@ object DialogEx {
                 return builder()
             }
         }
+        DialogQueueActivityDeal.addDialogBuilder(commonDialogFragment)
     }
 
     /**
      * 创建保活的dialog弹窗构建
      */
     fun addCommonDialog(factory: BaseDialogCustomBuilderFactory) {
-
+        DialogQueueActivityDeal.addDialogBuilder(factory)
     }
 
 }

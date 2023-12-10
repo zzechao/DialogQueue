@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "DialogQueue"
 include(":app")
 include(":library")
+include(":dialogQueueApp")

@@ -1,6 +1,7 @@
 package com.zhouz.dialogqueue
 
 import android.app.Activity
+import androidx.fragment.app.Fragment
 import kotlin.reflect.KClass
 
 /**
@@ -16,12 +17,16 @@ interface IBuildFactory<T> {
     /**
      * 优先级
      */
-    var priority: Int
+    fun priority(): Int {
+        return 1
+    }
 
     /**
      * dialogId
      */
-    val dialogId: Int
+    fun dialogId(): Int {
+        return DialogQueueActivityDeal.getDialogId()
+    }
 
     /**
      * dismiss的监听
@@ -31,17 +36,30 @@ interface IBuildFactory<T> {
     /**
      * 绑定的activity
      */
-    val bindActivity: Array<KClass<out Activity>>
+    fun bindActivity(): Array<KClass<out Activity>> {
+        return arrayOf()
+    }
+
+    /**
+     * 绑定的fragment
+     */
+    fun bindFragment(): Array<KClass<out Fragment>> {
+        return arrayOf()
+    }
 
     /**
      * 是否保活
      */
-    val isKeepALive: Boolean
+    fun isKeepALive(): Boolean {
+        return false
+    }
 
     /**
      * 数据处理或者拦截器
      */
-    val dialogPartInterceptors: Array<out IPartInterceptor>
+    fun dialogPartInterceptors(): Array<out IPartInterceptor> {
+        return arrayOf()
+    }
 
     /**
      * 构建对应的dialog信息

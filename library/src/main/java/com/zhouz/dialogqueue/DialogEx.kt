@@ -10,11 +10,15 @@ import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
+import com.zhouz.dialogqueue.log.DefaultLog
+import com.zhouz.dialogqueue.log.ILog
 
 /**
  * 弹窗队列处理类
  */
 object DialogEx {
+
+    var log: ILog = DefaultLog()
 
     fun init(application: Application) {
         application.registerActivityLifecycleCallbacks(DialogQueueActivityDeal)

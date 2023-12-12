@@ -1,17 +1,18 @@
 package com.zhouz.myapplication
 
-import org.junit.Test
+import com.zhouz.dialogqueue.DialogQueueActivityDeal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-import org.junit.Assert.*
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+fun main(args: Array<String>) {
+    val job = DialogQueueActivityDeal.dialogQueueScope.launch(Dispatchers.IO) {
+        while (true) {
+            delay(1000L)
+            println("test")
+        }
     }
+    Thread.sleep(5000L)
+    job.cancel()
 }

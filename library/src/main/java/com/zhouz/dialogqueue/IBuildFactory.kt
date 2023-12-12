@@ -2,11 +2,14 @@ package com.zhouz.dialogqueue
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import java.lang.ref.WeakReference
 import kotlin.reflect.KClass
 
 /**
- *
+ * 弹窗队列构造器
  */
+typealias DialogDismissListener = (() -> Unit)
+
 interface IBuildFactory<T> {
 
     /**
@@ -31,7 +34,7 @@ interface IBuildFactory<T> {
     /**
      * dismiss的监听
      */
-    var mDialogDismissListener: (() -> Unit)?
+    val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>>
 
     /**
      * 绑定的activity
@@ -70,4 +73,9 @@ interface IBuildFactory<T> {
      * 构建不同类似的dialog的消失方法
      */
     fun attachDialogDismiss()
+
+    /**
+     * 设置dismiss监听
+     */
+    fun addOnDismissListener(listener: DialogDismissListener)
 }

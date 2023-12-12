@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="30dp"
+    android:paddingVertical="24dp">
+
+    <TextView
+        android:id="@+id/mTittleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:text="提示"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/mContentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- 文本内容 -->
+        <TextView
+            android:id="@+id/mContentTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="fsfs的是的法定发送到发送到发送到发是第三方撒旦发射点发撒旦发射点发发的发生"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="fsfs的是的法定发送到发送到发送到发是第三方撒旦发射点发撒旦发射点发发的发生" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/mBottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/mCancelTv"
+            style="@style/styleCommonBottomCancelTv"
+            android:text="取消" />
+
+        <TextView
+            android:id="@+id/mOkTv"
+            style="@style/styleCommonBottomCancelTv"
+            android:text="ok" />
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -24,7 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.abs
 
-object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), DefaultActivityLifecycleCallbacks {
+object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
+    DefaultActivityLifecycleCallbacks {
 
 
     private val logger = LoggerFactory.getLogger("DialogQueueActivityDeal")
@@ -38,29 +39,37 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), D
         logger.e("CoroutineException", "Coroutine exception occurred. $context", throwable)
     }
 
-    private val dispatcher = ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, LinkedBlockingDeque(), object : ThreadFactory {
-        private val mThreadId = AtomicInteger(0)
+    private val dispatcher = ThreadPoolExecutor(
+        1,
+        1,
+        0,
+        TimeUnit.MILLISECONDS,
+        LinkedBlockingDeque(),
+        object : ThreadFactory {
+            private val mThreadId = AtomicInteger(0)
 
-        override fun newThread(r: Runnable): Thread {
-            val t = Thread(r)
-            t.name = String.format("dialog_thread_%d", mThreadId.getAndIncrement())
-            return t
-        }
-    }).asCoroutineDispatcher()
+            override fun newThread(r: Runnable): Thread {
+                val t = Thread(r)
+                t.name = String.format("dialog_thread_%d", mThreadId.getAndIncrement())
+                return t
+            }
+        }).asCoroutineDispatcher()
 
     val dialogQueueScope = CoroutineScope(SupervisorJob() + dispatcher + loggingExceptionHandler)
 
     private val isShow = AtomicBoolean(false)
+    private val isRunQueue = AtomicBoolean(false)
 
-    private val queue = PriorityBlockingQueue<IBuildFactory<out Any>>(20, Comparator { dialog1, dialog2 ->
-        val diff = dialog2.priority() - dialog1.priority()
-        return@Comparator if (diff == 0) {
-            val diff2 = dialog1.dialogId() - dialog2.dialogId()
-            diff2 / abs(diff2)
-        } else {
-            diff / abs(diff)
-        }
-    })
+    private val queue =
+        PriorityBlockingQueue<IBuildFactory<out Any>>(20, Comparator { dialog1, dialog2 ->
+            val diff = dialog2.priority() - dialog1.priority()
+            return@Comparator if (diff == 0) {
+                val diff2 = dialog1.dialogId() - dialog2.dialogId()
+                diff2 / abs(diff2)
+            } else {
+                diff / abs(diff)
+            }
+        })
 
     /**
      * 不是对应Activity的弹窗
@@ -159,7 +168,10 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), D
      * ================watch fragment =================
      */
     private fun FragmentActivity.watchFragment() {
-        supportFragmentManager.registerFragmentLifecycleCallbacks(this@DialogQueueActivityDeal, false)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            this@DialogQueueActivityDeal,
+            false
+        )
     }
 
     private fun Fragment.watchFragment() {
@@ -178,10 +190,12 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), D
      * 执行弹窗队列
      */
     private fun showQueueDialog() {
-
-
-        MethodStackTrace.printMethodStack("zzc", "showQueueDialog")
-        logger.i("showQueueDialog size:${queue.size}")
+        if (queue.isEmpty()) return
+        logger.i("showQueueDialog size:${queue.size}-${isRunQueue.get()}-${isShow.get()}")
+        if (isRunQueue.get()) return
+        if (isShow.get()) return
+        isRunQueue.compareAndSet(false, true)
+        logger.i("showQueueDialog job?.cancel()")
         job?.cancel()
         job = dialogQueueScope.launch {
             var data = queue.poll()
@@ -199,7 +213,8 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), D
                         }
 
                         fragmentClazz != null && data.bindFragment().contains(fragmentClazz) &&
-                                activityClazz != null && data.bindActivity().contains(activityClazz) -> {
+                                activityClazz != null && data.bindActivity()
+                            .contains(activityClazz) -> {
                             mWeakReferenceActivity?.let {
                                 data.showDialog(it)
                                 return@launch
@@ -240,6 +255,8 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(), D
                 }
             }
         }
+        logger.i("showQueueDialog end")
+        isRunQueue.compareAndSet(true, false)
     }
 
     /**

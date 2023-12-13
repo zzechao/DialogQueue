@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeat(10) { index ->
                 DialogEx.addCommonDialog {
-                    logger.i("CommonDialog builder")
+                    logger.i("CommonDialog builder $index")
                     val dialog = CommonDialog(it)
                     dialog.setContent("测试$index")
                     dialog.show()

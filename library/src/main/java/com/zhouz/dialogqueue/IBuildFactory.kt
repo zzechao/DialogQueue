@@ -17,18 +17,15 @@ interface IBuildFactory<T> {
      */
     var mDialog: T?
 
+    val dialogID: Int
+
+    var extra: String
+
     /**
      * 优先级
      */
     fun priority(): Int {
         return 1
-    }
-
-    /**
-     * dialogId
-     */
-    fun dialogId(): Int {
-        return DialogQueueActivityDeal.getDialogId()
     }
 
     /**
@@ -67,12 +64,12 @@ interface IBuildFactory<T> {
     /**
      * 构建对应的dialog信息
      */
-    suspend fun buildDialog(activity: Activity): T
+    suspend fun buildDialog(activity: Activity, extra: String): T
 
     /**
      * 构建不同类似的dialog的消失方法
      */
-    fun attachDialogDismiss()
+    fun attachDialogDismiss(): Boolean
 
     /**
      * 设置dismiss监听

@@ -18,10 +18,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         lifecycleScope.launch(Dispatchers.Main) {
             repeat(10) { index ->
-                DialogEx.addCommonDialog {
-                    logger.i("CommonDialog builder $index")
-                    val dialog = CommonDialog(it)
-                    dialog.setContent("测试$index")
+                DialogEx.addCommonDialog("$index") { activity, extra ->
+                    logger.i("CommonDialog builde $extra")
+                    val dialog = CommonDialog(activity)
+                    dialog.setContent("测试$extra")
                     dialog.show()
                     dialog
                 }

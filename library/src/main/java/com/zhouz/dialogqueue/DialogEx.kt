@@ -6,12 +6,12 @@ import android.app.Dialog
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
 import com.zhouz.dialogqueue.log.DefaultLog
-import com.zhouz.dialogqueue.log.ILog
 import com.zhouz.dialogqueue.log.ILogger
 import com.zhouz.dialogqueue.log.LoggerFactory
 
@@ -31,12 +31,13 @@ object DialogEx {
     /**
      * 创建当前activity的队列弹窗ActivityDialog
      */
-    fun addActivityDialog(builder: suspend () -> ComponentActivity): Int {
+    fun addActivityDialog(extra: String = "", builder: suspend () -> ComponentActivity): Int {
         val dialogActivityFactory = object : BaseDialogActivityBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity): ComponentActivity {
+            override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
                 return builder()
             }
         }
+        dialogActivityFactory.extra = extra
         return addActivityDialog(dialogActivityFactory)
     }
 
@@ -45,18 +46,19 @@ object DialogEx {
      */
     fun addActivityDialog(factory: BaseDialogActivityBuilderFactory): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogId()
+        return factory.dialogID
     }
 
     /**
      * 创建当前activity的队列弹窗ViewDialog
      */
-    fun addViewDialog(builder: suspend () -> View): Int {
+    fun addViewDialog(extra: String = "", builder: suspend () -> View): Int {
         val dialogViewFactory = object : BaseDialogViewBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity): View {
+            override suspend fun buildDialog(activity: Activity, extra: String): View {
                 return builder()
             }
         }
+        dialogViewFactory.extra = extra
         return addViewDialog(dialogViewFactory)
     }
 
@@ -65,18 +67,19 @@ object DialogEx {
      */
     fun addViewDialog(factory: BaseDialogViewBuilderFactory): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogId()
+        return factory.dialogID
     }
 
     /**
      * 创建当前activity的队列弹窗fragmentDialog
      */
-    fun addFragmentDialog(builder: suspend () -> DialogFragment): Int {
+    fun addFragmentDialog(extra: String = "", builder: suspend () -> DialogFragment): Int {
         val dialogFragmentFactory = object : BaseDialogFragmentBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity): DialogFragment {
+            override suspend fun buildDialog(activity: Activity, extra: String): Fragment {
                 return builder()
             }
         }
+        dialogFragmentFactory.extra = extra
         return addFragmentDialog(dialogFragmentFactory)
     }
 
@@ -85,18 +88,19 @@ object DialogEx {
      */
     fun addFragmentDialog(factory: BaseDialogFragmentBuilderFactory): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogId()
+        return factory.dialogID
     }
 
     /**
      * 创建当前activity的队列弹窗Dialog
      */
-    fun addCommonDialog(builder: suspend (Activity) -> Dialog): Int {
+    fun addCommonDialog(extra: String = "", builder: suspend (Activity, String) -> Dialog): Int {
         val commonDialogFragment = object : BaseDialogCustomBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity): Dialog {
-                return builder(activity)
+            override suspend fun buildDialog(activity: Activity, extra: String): Dialog {
+                return builder.invoke(activity, extra)
             }
         }
+        commonDialogFragment.extra = extra
         return addCommonDialog(commonDialogFragment)
     }
 
@@ -105,7 +109,7 @@ object DialogEx {
      */
     fun addCommonDialog(factory: BaseDialogCustomBuilderFactory): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogId()
+        return factory.dialogID
     }
 
 

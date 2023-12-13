@@ -64,7 +64,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
         PriorityBlockingQueue<IBuildFactory<out Any>>(20, Comparator { dialog1, dialog2 ->
             val diff = dialog2.priority() - dialog1.priority()
             return@Comparator if (diff == 0) {
-                val diff2 = dialog1.dialogId() - dialog2.dialogId()
+                val diff2 = dialog1.dialogID - dialog2.dialogID
                 diff2 / abs(diff2)
             } else {
                 diff / abs(diff)
@@ -83,6 +83,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     fun addDialogBuilder(factory: IBuildFactory<out Any>) {
+        logger.i("addDialogBuilder extra:${factory.extra} id:${factory.dialogID}")
         queue.offer(factory)
         showQueueDialog()
     }
@@ -199,64 +200,66 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
         job?.cancel()
         job = dialogQueueScope.launch {
             var data = queue.poll()
-            while (data != null) {
-                val intercept = data.dialogPartInterceptors().firstOrNull { it.intercept() }
-                if (intercept == null) {
-                    val activityClazz = mWeakReferenceActivity?.javaClass?.kotlin
-                    val fragmentClazz = mWeakReferenceFragment?.javaClass?.kotlin
-                    when {
-                        data.bindActivity().isEmpty() && data.bindFragment().isEmpty() -> {
-                            mWeakReferenceActivity?.let {
-                                data.showDialog(it)
-                                return@launch
-                            }
-                        }
-
-                        fragmentClazz != null && data.bindFragment().contains(fragmentClazz) &&
-                                activityClazz != null && data.bindActivity()
-                            .contains(activityClazz) -> {
-                            mWeakReferenceActivity?.let {
-                                data.showDialog(it)
-                                return@launch
-                            }
-                        }
-
-                        activityClazz != null && data.bindActivity().contains(activityClazz) -> {
-                            if (data.bindFragment().isNotEmpty()) {
-                                deFragmentList.add(data)
-                                data = queue.poll()
-                            } else {
+            apply {
+                while (data != null) {
+                    val intercept = data.dialogPartInterceptors().firstOrNull { it.intercept() }
+                    if (intercept == null) {
+                        val activityClazz = mWeakReferenceActivity?.javaClass?.kotlin
+                        val fragmentClazz = mWeakReferenceFragment?.javaClass?.kotlin
+                        when {
+                            data.bindActivity().isEmpty() && data.bindFragment().isEmpty() -> {
                                 mWeakReferenceActivity?.let {
                                     data.showDialog(it)
-                                    return@launch
+                                    return@apply
                                 }
                             }
-                        }
 
-                        fragmentClazz != null && data.bindFragment().contains(fragmentClazz) -> {
-                            if (data.bindActivity().isNotEmpty()) {
-                                if (data.isKeepALive()) {
-                                    deActivityList.add(data)
-                                }
-                                data = queue.poll()
-                            } else {
+                            fragmentClazz != null && data.bindFragment().contains(fragmentClazz) &&
+                                    activityClazz != null && data.bindActivity()
+                                .contains(activityClazz) -> {
                                 mWeakReferenceActivity?.let {
                                     data.showDialog(it)
-                                    return@launch
+                                    return@apply
                                 }
                             }
-                        }
+
+                            activityClazz != null && data.bindActivity().contains(activityClazz) -> {
+                                if (data.bindFragment().isNotEmpty()) {
+                                    data?.let { deFragmentList.add(it) }
+                                    data = queue.poll()
+                                } else {
+                                    mWeakReferenceActivity?.let {
+                                        data.showDialog(it)
+                                        return@apply
+                                    }
+                                }
+                            }
+
+                            fragmentClazz != null && data.bindFragment().contains(fragmentClazz) -> {
+                                if (data.bindActivity().isNotEmpty()) {
+                                    if (data.isKeepALive()) {
+                                        deActivityList.add(data)
+                                    }
+                                    data = queue.poll()
+                                } else {
+                                    mWeakReferenceActivity?.let {
+                                        data.showDialog(it)
+                                        return@apply
+                                    }
+                                }
+                            }
 
 
-                        else -> {
+                            else -> {
 
+                            }
                         }
                     }
                 }
             }
+            isRunQueue.compareAndSet(true, false)
+            logger.i("showQueueDialog end")
         }
-        logger.i("showQueueDialog end")
-        isRunQueue.compareAndSet(true, false)
     }
 
     /**
@@ -273,11 +276,15 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
             logger.i("showQueueDialog factory:$this")
             val dialog = withContext(Dispatchers.Main) {
                 logger.i("showQueueDialog buildDialog")
-                buildDialog(activity)
+                buildDialog(activity, this@showDialog.extra)
             }
             logger.i("showQueueDialog attachDialogDismiss dialog:$dialog")
             this.mDialog = dialog
-            attachDialogDismiss()
+            if (!attachDialogDismiss()) {
+                if (isShow.compareAndSet(true, false)) {
+                    showQueueDialog()
+                }
+            }
         }
     }
 
@@ -285,15 +292,15 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
      * 去除队列的dialogID
      */
     fun removeFloatDialog(dialogID: Int) {
-        queue.find { it.dialogId() == dialogID }?.let {
+        queue.find { it.dialogID == dialogID }?.let {
             queue.remove(it)
             return
         }
-        deActivityList.find { it.dialogId() == dialogID }?.let {
+        deActivityList.find { it.dialogID == dialogID }?.let {
             deActivityList.remove(it)
             return
         }
-        deFragmentList.find { it.dialogId() == dialogID }?.let {
+        deFragmentList.find { it.dialogID == dialogID }?.let {
             deFragmentList.remove(it)
             return
         }

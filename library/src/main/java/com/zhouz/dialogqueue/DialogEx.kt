@@ -16,7 +16,9 @@ import com.zhouz.dialogqueue.log.ILogger
 import com.zhouz.dialogqueue.log.LoggerFactory
 
 /**
- * 弹窗队列处理类
+ * @author:zhouzechao
+ * @date: 2/24/21
+ * 弹窗队列组装
  */
 object DialogEx {
 

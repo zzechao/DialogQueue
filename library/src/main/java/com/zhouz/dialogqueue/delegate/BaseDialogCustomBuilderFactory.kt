@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference
 
 abstract class BaseDialogCustomBuilderFactory : IBuildFactory<Dialog> {
 
-    protected val logger = LoggerFactory.getLogger("BaseDialogCustomBuilderFactory")
+    open val logger = LoggerFactory.getLogger("BaseDialogCustomBuilderFactory")
 
     override var mDialog: Dialog? = null
 
@@ -17,7 +17,8 @@ abstract class BaseDialogCustomBuilderFactory : IBuildFactory<Dialog> {
 
     override val dialogID: Int = DialogQueueActivityDeal.getDialogId()
 
-    override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> = mutableSetOf()
+    override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> =
+        mutableSetOf()
 
     override fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false

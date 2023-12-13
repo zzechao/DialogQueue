@@ -1,7 +1,7 @@
 package com.zhouz.dialogqueue.log
 
 /**
- * @author:zhouzechao
+ * @author:zhouz
  * @date: 2/24/21
  * description：日志文件模块
  */

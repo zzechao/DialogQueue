@@ -25,7 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.abs
 
 /**
- *
+ * @author:zhouz
+ * @date: 2/24/21
+ * 弹窗队列处理类
  */
 object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     DefaultActivityLifecycleCallbacks {

@@ -3,7 +3,7 @@ package com.zhouz.dialogqueue.log
 import android.util.Log
 
 /**
- * @author:zhouzechao
+ * @author:zhouz
  * @date: 2/24/21
  * description：
  */

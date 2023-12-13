@@ -6,6 +6,8 @@ import java.lang.ref.WeakReference
 import kotlin.reflect.KClass
 
 /**
+ * @author:zhouz
+ * @date: 2/24/21
  * 弹窗队列构造器
  */
 typealias DialogDismissListener = (() -> Unit)

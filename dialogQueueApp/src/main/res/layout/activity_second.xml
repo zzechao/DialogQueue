@@ -4,4 +4,53 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondActivity" />
+    tools:context=".SecondActivity">
+
+    <Button
+        android:id="@+id/first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:text="firstFragment" />
+
+    <Button
+        android:id="@+id/second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:text="secondFragment" />
+
+
+    <Button
+        android:id="@+id/bt_add_default_dialog_queue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="200dp"
+        android:text="addDefaultDialogQueue" />
+
+
+    <Button
+        android:id="@+id/bt_add_factory1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="160dp"
+        android:text="CommonDialogFactory" />
+
+    <Button
+        android:id="@+id/bt_add_factory2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="100dp"
+        android:text="CommonDialogFactory2" />
+
+    <Button
+        android:id="@+id/bt_add_factory3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="20dp"
+        android:text="CommonDialogFactory3" />
+</FrameLayout>

@@ -98,16 +98,19 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
      * ==============activity=======================
      */
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        mWeakReferenceActivity = activity
+        logger.i("onActivityCreated activity:${activity::class.java}")
         queue.removeAll { !it.isKeepALive() }
-    }
-
-    override fun onActivityStarted(activity: Activity) {
-        super.onActivityStarted(activity)
         (activity as? FragmentActivity)?.watchFragment()
     }
 
+    override fun onActivityStarted(activity: Activity) {
+        logger.i("onActivityStarted activity:${activity::class.java}")
+        super.onActivityStarted(activity)
+        mWeakReferenceActivity = activity
+    }
+
     override fun onActivityResumed(activity: Activity) {
+        logger.i("onActivityResumed activity:${activity::class.java}")
         super.onActivityResumed(activity)
         deActivityList.firstOrNull { it.bindActivity().contains(activity::class) }?.let {
             job?.cancel()
@@ -125,29 +128,36 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onActivityStopped(activity: Activity) {
+        logger.i("onActivityStopped activity:${activity::class.java}")
         super.onActivityStopped(activity)
-        (activity as? FragmentActivity)?.deWatchFragment()
+        if (mWeakReferenceActivity == activity) {
+            mWeakReferenceActivity = null
+        }
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        mWeakReferenceActivity = null
+        logger.i("onActivityDestroyed activity:${activity::class.java}")
         job?.cancel()
+        (activity as? FragmentActivity)?.deWatchFragment()
     }
 
     /**
      * =================fragment ====================
      */
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
+        logger.i("onFragmentCreated Fragment:${f::class.java}")
         super.onFragmentCreated(fm, f, savedInstanceState)
-        mWeakReferenceFragment = f
-    }
-
-    override fun onFragmentStarted(fm: FragmentManager, f: Fragment) {
-        super.onFragmentStarted(fm, f)
         f.watchFragment()
     }
 
+    override fun onFragmentStarted(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentStarted Fragment:${f::class.java}")
+        super.onFragmentStarted(fm, f)
+        mWeakReferenceFragment = f
+    }
+
     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentResumed Fragment:${f::class.java}")
         super.onFragmentResumed(fm, f)
         deFragmentList.firstOrNull { it.bindFragment().contains(f::class) }?.let {
             job?.cancel()
@@ -160,13 +170,17 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onFragmentStopped(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentStopped Fragment:${f::class.java}")
         super.onFragmentStopped(fm, f)
-        f.deWatchFragment()
+        if (mWeakReferenceFragment == f) {
+            mWeakReferenceFragment = null
+        }
     }
 
     override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentDestroyed Fragment:${f::class.java}")
         super.onFragmentDestroyed(fm, f)
-        mWeakReferenceFragment = null
+        f.deWatchFragment()
     }
 
 
@@ -211,6 +225,11 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                     if (intercept == null) {
                         val activityClazz = mWeakReferenceActivity?.javaClass?.kotlin
                         val fragmentClazz = mWeakReferenceFragment?.javaClass?.kotlin
+                        logger.i(
+                            "activityClazz:$activityClazz fragmentClazz:$fragmentClazz " +
+                                    "data.bindActivity():${data.bindActivity()} " +
+                                    "data.bindFragment():${data.bindFragment()}"
+                        )
                         when {
                             data.bindActivity().isEmpty() && data.bindFragment().isEmpty() -> {
                                 mWeakReferenceActivity?.let {
@@ -228,7 +247,8 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                                 }
                             }
 
-                            activityClazz != null && data.bindActivity().contains(activityClazz) -> {
+                            activityClazz != null && data.bindActivity()
+                                .contains(activityClazz) -> {
                                 if (data.bindFragment().isNotEmpty()) {
                                     data?.let { deFragmentList.add(it) }
                                     data = queue.poll()
@@ -240,7 +260,8 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                                 }
                             }
 
-                            fragmentClazz != null && data.bindFragment().contains(fragmentClazz) -> {
+                            fragmentClazz != null && data.bindFragment()
+                                .contains(fragmentClazz) -> {
                                 if (data.bindActivity().isNotEmpty()) {
                                     if (data.isKeepALive()) {
                                         deActivityList.add(data)
@@ -252,11 +273,6 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                                         return@apply
                                     }
                                 }
-                            }
-
-
-                            else -> {
-
                             }
                         }
                     }

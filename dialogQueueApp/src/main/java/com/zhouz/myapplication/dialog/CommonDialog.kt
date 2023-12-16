@@ -1,4 +1,4 @@
-package com.zhouz.myapplication.ui.main
+package com.zhouz.myapplication.dialog
 
 import android.content.Context
 import android.graphics.Color
@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.blankj.utilcode.util.SizeUtils
 import com.zhouz.myapplication.databinding.CommonDialogBinding
+import com.zhouz.myapplication.ui.main.BaseDialog
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 

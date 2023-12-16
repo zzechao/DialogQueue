@@ -1,13 +1,11 @@
-package com.zhouz.myapplication.factory
+package com.zhouz.myapplication.factory.commonDialog
 
 import android.app.Activity
 import android.app.Dialog
-import androidx.fragment.app.Fragment
 import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
-import com.zhouz.myapplication.MainActivity
-import com.zhouz.myapplication.fragment.FirstFragment
-import com.zhouz.myapplication.ui.main.CommonDialog
+import com.zhouz.myapplication.SecondActivity
+import com.zhouz.myapplication.dialog.CommonDialog
 import kotlin.reflect.KClass
 
 
@@ -16,23 +14,22 @@ import kotlin.reflect.KClass
  * @date: 2023/12/13 12:29
  * description：创建普通弹窗的factory
  */
-class CommonDialogFactory : BaseDialogCustomBuilderFactory() {
+private var index = 0
 
-    override val logger = LoggerFactory.getLogger("CommonDialogFactory")
+class CommonDialogFactory2 : BaseDialogCustomBuilderFactory() {
+
+    override val logger = LoggerFactory.getLogger("CommonDialogFactory2")
     override suspend fun buildDialog(activity: Activity, extra: String): Dialog {
         logger.i("CommonDialog builde $extra")
         val dialog = CommonDialog(activity)
-        dialog.setContent("测试$extra")
+        dialog.setContent("测试 CommonDialogFactory2 ${index + 1}")
+        index += 1
         dialog.show()
         return dialog
     }
 
     override fun bindActivity(): Array<KClass<out Activity>> {
-        return arrayOf(MainActivity::class)
-    }
-
-    override fun bindFragment(): Array<KClass<out Fragment>> {
-        return arrayOf(FirstFragment::class)
+        return arrayOf(SecondActivity::class)
     }
 
     override fun isKeepALive(): Boolean {

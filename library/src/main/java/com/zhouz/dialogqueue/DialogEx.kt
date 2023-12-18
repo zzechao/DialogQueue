@@ -77,7 +77,7 @@ object DialogEx {
      */
     fun addFragmentDialog(extra: String = "", builder: suspend () -> DialogFragment): Int {
         val dialogFragmentFactory = object : BaseDialogFragmentBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity, extra: String): Fragment {
+            override suspend fun buildDialog(activity: Activity, extra: String): DialogFragment {
                 return builder()
             }
         }
@@ -121,5 +121,19 @@ object DialogEx {
     fun removeFloatDialog(dialogID: Int) {
         logger.i("removeFloatDialog dialogId:$dialogID")
         DialogQueueActivityDeal.removeFloatDialog(dialogID)
+    }
+
+    /**
+     * 暂停显示弹窗,只添加到队列
+     */
+    fun pause() {
+
+    }
+
+    /**
+     * 恢复显示弹窗
+     */
+    fun resume() {
+
     }
 }

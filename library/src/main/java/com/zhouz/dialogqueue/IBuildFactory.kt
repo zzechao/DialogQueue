@@ -19,8 +19,14 @@ interface IBuildFactory<T> {
      */
     var mDialog: T?
 
+    /**
+     * 弹窗ID
+     */
     val dialogID: Int
 
+    /**
+     * 透传字段
+     */
     var extra: String
 
     /**

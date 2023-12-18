@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 /**
  * @author:zhouz
  * @date: 2023/12/13 12:29
- * description：创建普通弹窗的factory
+ * description：创建普通弹窗的factory，只绑定了SecondActivity
  */
 private var index = 0
 
@@ -28,10 +28,16 @@ class CommonDialogFactory2 : BaseDialogCustomBuilderFactory() {
         return dialog
     }
 
+    /**
+     * 绑定SecondActivity
+     */
     override fun bindActivity(): Array<KClass<out Activity>> {
         return arrayOf(SecondActivity::class)
     }
 
+    /**
+     *
+     */
     override fun isKeepALive(): Boolean {
         return true
     }

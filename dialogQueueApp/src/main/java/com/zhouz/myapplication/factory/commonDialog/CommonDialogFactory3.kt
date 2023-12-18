@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 /**
  * @author:zhouz
  * @date: 2023/12/13 12:29
- * description：创建普通弹窗的factory
+ * description：创建普通弹窗的factory，只绑定了SecondFragment
  */
 private var index = 0
 
@@ -29,6 +29,9 @@ class CommonDialogFactory3 : BaseDialogCustomBuilderFactory() {
         return dialog
     }
 
+    /**
+     * 绑定SecondFragment
+     */
     override fun bindFragment(): Array<KClass<out Fragment>> {
         return arrayOf(SecondFragment::class)
     }

@@ -1,5 +1,6 @@
 package com.zhouz.dialogqueue.delegate
 
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -8,9 +9,9 @@ import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
 import java.lang.ref.WeakReference
 
-abstract class BaseDialogFragmentBuilderFactory : IBuildFactory<Fragment>,
+abstract class BaseDialogFragmentBuilderFactory : IBuildFactory<DialogFragment>,
     DefaultLifecycleObserver {
-    override var mDialog: Fragment? = null
+    override var mDialog: DialogFragment? = null
 
     override var extra: String = ""
 

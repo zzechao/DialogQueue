@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity(), IShowFragment {
             this.startActivity(intent)
         }
 
+        /**
+         * 添加不包活的弹窗队列
+         */
         findViewById<View>(R.id.bt_add_default_dialog_queue).setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
                 repeat(10) { index ->

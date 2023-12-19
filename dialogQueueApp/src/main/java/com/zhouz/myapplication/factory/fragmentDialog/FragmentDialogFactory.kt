@@ -13,6 +13,6 @@ import com.zhouz.myapplication.dialog.FragmentDialog
  */
 class FragmentDialogFactory : BaseDialogFragmentBuilderFactory() {
     override suspend fun buildDialog(activity: Activity, extra: String): DialogFragment {
-        return FragmentDialog()
+        return FragmentDialog.newInstance(extra)
     }
 }

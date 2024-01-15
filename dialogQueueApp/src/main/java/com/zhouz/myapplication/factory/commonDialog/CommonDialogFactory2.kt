@@ -2,7 +2,7 @@ package com.zhouz.myapplication.factory.commonDialog
 
 import android.app.Activity
 import android.app.Dialog
-import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
+import com.zhouz.dialogqueue.delegate.BaseDialogCommonBuilderFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
 import com.zhouz.myapplication.SecondActivity
 import com.zhouz.myapplication.dialog.CommonDialog
@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
  */
 private var index = 0
 
-class CommonDialogFactory2 : BaseDialogCustomBuilderFactory() {
+class CommonDialogFactory2 : BaseDialogCommonBuilderFactory() {
 
     override val logger = LoggerFactory.getLogger("CommonDialogFactory2")
     override suspend fun buildDialog(activity: Activity, extra: String): Dialog {

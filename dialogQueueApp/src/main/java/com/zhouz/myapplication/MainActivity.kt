@@ -3,6 +3,9 @@ package com.zhouz.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhouz.dialogqueue.DialogEx
@@ -16,6 +19,7 @@ import com.zhouz.myapplication.fragment.FirstFragment
 import com.zhouz.myapplication.fragment.SecondFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity(), IShowFragment {
 
@@ -73,6 +77,12 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
         findViewById<View>(R.id.bt_add_factory4).setOnClickListener {
             DialogEx.addCommonDialog(CommonDialogFactory4())
+        }
+
+        val radgroup = findViewById<View>(R.id.radioGroup) as RadioGroup
+        radgroup.setOnCheckedChangeListener { group, checkedId ->
+            val radbtn = findViewById<View>(checkedId) as RadioButton
+            Toast.makeText(applicationContext, "按钮组值发生改变,你选了" + radbtn.text, Toast.LENGTH_LONG).show()
         }
     }
 }

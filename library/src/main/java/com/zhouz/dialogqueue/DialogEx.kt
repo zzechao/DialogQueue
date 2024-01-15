@@ -6,9 +6,8 @@ import android.app.Dialog
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
-import com.zhouz.dialogqueue.delegate.BaseDialogCustomBuilderFactory
+import com.zhouz.dialogqueue.delegate.BaseDialogCommonBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogFragmentBuilderFactory
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
 import com.zhouz.dialogqueue.log.DefaultLog
@@ -97,7 +96,7 @@ object DialogEx {
      * 创建当前activity的队列弹窗Dialog
      */
     fun addCommonDialog(extra: String = "", builder: suspend (Activity, String) -> Dialog): Int {
-        val commonDialogFragment = object : BaseDialogCustomBuilderFactory() {
+        val commonDialogFragment = object : BaseDialogCommonBuilderFactory() {
             override suspend fun buildDialog(activity: Activity, extra: String): Dialog {
                 return builder.invoke(activity, extra)
             }
@@ -109,7 +108,7 @@ object DialogEx {
     /**
      * 创建保活的dialog弹窗构建
      */
-    fun addCommonDialog(factory: BaseDialogCustomBuilderFactory): Int {
+    fun addCommonDialog(factory: BaseDialogCommonBuilderFactory): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
         return factory.dialogID
     }

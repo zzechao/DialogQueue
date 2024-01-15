@@ -7,7 +7,7 @@ import com.zhouz.dialogqueue.IBuildFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
 import java.lang.ref.WeakReference
 
-abstract class BaseDialogCustomBuilderFactory : IBuildFactory<Dialog> {
+abstract class BaseDialogCommonBuilderFactory : IBuildFactory<Dialog> {
 
     open val logger = LoggerFactory.getLogger("BaseDialogCustomBuilderFactory")
 

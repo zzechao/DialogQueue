@@ -228,11 +228,12 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                         logger.i(
                             "activityClazz:$activityClazz fragmentClazz:$fragmentClazz " +
                                     "data.bindActivity():${data.bindActivity().firstOrNull()} " +
-                                    "data.bindFragment():${data.bindFragment().firstOrNull()}"
+                                    "data.bindFragment():${data.bindFragment().firstOrNull()}" +
+                                    "dataClazz:${data::class.java}"
                         )
                         when {
                             data.bindActivity().isEmpty() && data.bindFragment().isEmpty() -> {
-                                logger.i("action 1")
+                                logger.i("action 1 showDialog")
                                 mWeakReferenceActivity?.let {
                                     data.showDialog(it)
                                     return@apply
@@ -242,20 +243,28 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                             fragmentClazz != null && data.bindFragment().contains(fragmentClazz) &&
                                     activityClazz != null && data.bindActivity()
                                 .contains(activityClazz) -> {
-                                logger.i("action 2")
-                                mWeakReferenceActivity?.let {
-                                    data.showDialog(it)
-                                    return@apply
+                                mWeakReferenceFragment?.activity?.javaClass?.kotlin?.let {
+                                    if (data.bindActivity().contains(it)) {
+                                        logger.i("action 2 showDialog")
+                                        mWeakReferenceActivity?.let {
+                                            data.showDialog(it)
+                                            return@apply
+                                        }
+                                    }
                                 }
+                                logger.i("action 2 queue.poll()")
+                                data?.let { deFragmentList.add(it) }
+                                data = queue.poll()
                             }
 
                             activityClazz != null && data.bindActivity()
                                 .contains(activityClazz) -> {
-                                logger.i("action 3")
                                 if (data.bindFragment().isNotEmpty()) {
+                                    logger.i("action 3 queue.poll()")
                                     data?.let { deFragmentList.add(it) }
                                     data = queue.poll()
                                 } else {
+                                    logger.i("action 3 showDialog")
                                     mWeakReferenceActivity?.let {
                                         data.showDialog(it)
                                         return@apply
@@ -265,13 +274,14 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
 
                             fragmentClazz != null && data.bindFragment()
                                 .contains(fragmentClazz) -> {
-                                logger.i("action 4")
                                 if (data.bindActivity().isNotEmpty()) {
-                                    if (data.isKeepALive()) {
-                                        deActivityList.add(data)
+                                    logger.i("action 4 queue.poll()")
+                                    if (data?.isKeepALive() == true) {
+                                        data?.let { deActivityList.add(it) }
                                     }
                                     data = queue.poll()
                                 } else {
+                                    logger.i("action 4 showDialog")
                                     mWeakReferenceActivity?.let {
                                         data.showDialog(it)
                                         return@apply
@@ -280,21 +290,21 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                             }
 
                             data.bindActivity().isNotEmpty() -> {
-                                logger.i("action 5")
-                                if (data.isKeepALive()) {
-                                    deActivityList.add(data)
+                                logger.i("action 5 queue.poll()")
+                                if (data?.isKeepALive() == true) {
+                                    data?.let { deActivityList.add(it) }
                                 }
                                 data = queue.poll()
                             }
 
                             data.bindFragment().isNotEmpty() -> {
-                                logger.i("action 6")
+                                logger.i("action 6 queue.poll()")
                                 data?.let { deFragmentList.add(it) }
                                 data = queue.poll()
                             }
 
                             else -> {
-                                logger.i("action 7")
+                                logger.i("action 7 queue.poll()")
                                 data = queue.poll()
                             }
                         }

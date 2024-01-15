@@ -11,6 +11,7 @@ import com.zhouz.myapplication.dialog.CommonDialog
 import com.zhouz.myapplication.factory.commonDialog.CommonDialogFactory
 import com.zhouz.myapplication.factory.commonDialog.CommonDialogFactory2
 import com.zhouz.myapplication.factory.commonDialog.CommonDialogFactory3
+import com.zhouz.myapplication.factory.commonDialog.CommonDialogFactory4
 import com.zhouz.myapplication.fragment.FirstFragment
 import com.zhouz.myapplication.fragment.SecondFragment
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,10 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
         findViewById<View>(R.id.bt_add_factory3).setOnClickListener {
             DialogEx.addCommonDialog(CommonDialogFactory3())
+        }
+
+        findViewById<View>(R.id.bt_add_factory4).setOnClickListener {
+            DialogEx.addCommonDialog(CommonDialogFactory4())
         }
     }
 }

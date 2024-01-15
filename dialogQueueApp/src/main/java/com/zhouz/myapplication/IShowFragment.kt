@@ -14,11 +14,12 @@ interface IShowFragment {
         if (firstFragment == null) {
             firstFragment = FirstFragment(R.layout.fragment_main)
             val bt = activity.supportFragmentManager.beginTransaction()
-            bt.add(R.id.container, firstFragment!!)
+            bt.replace(R.id.container, firstFragment!!)
             bt.commitAllowingStateLoss()
         } else {
             val bt = activity.supportFragmentManager.beginTransaction()
-            bt.show(firstFragment!!)
+            bt.replace(R.id.container, firstFragment!!)
+            bt.commitAllowingStateLoss()
         }
     }
 
@@ -26,11 +27,12 @@ interface IShowFragment {
         if (secondFragment == null) {
             secondFragment = SecondFragment(R.layout.fragment_main_2)
             val bt = activity.supportFragmentManager.beginTransaction()
-            bt.add(R.id.container, secondFragment!!)
+            bt.replace(R.id.container, secondFragment!!)
             bt.commitAllowingStateLoss()
         } else {
             val bt = activity.supportFragmentManager.beginTransaction()
-            bt.show(secondFragment!!)
+            bt.replace(R.id.container, secondFragment!!)
+            bt.commitAllowingStateLoss()
         }
     }
 

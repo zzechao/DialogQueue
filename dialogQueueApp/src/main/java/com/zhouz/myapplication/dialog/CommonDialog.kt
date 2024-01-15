@@ -1,18 +1,12 @@
 package com.zhouz.myapplication.dialog
 
 import android.content.Context
-import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
-import android.view.Gravity
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.blankj.utilcode.util.SizeUtils
 import com.zhouz.myapplication.databinding.CommonDialogBinding
 import com.zhouz.myapplication.ui.main.BaseDialog
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 
 open class CommonDialog(context: Context) : BaseDialog(context) {
@@ -45,49 +39,12 @@ open class CommonDialog(context: Context) : BaseDialog(context) {
 
     private var mMsg: Any? = null // 回传数据
 
-    fun setListener(clickListener: OnDialogClickListener) {
-        this.mListener = clickListener
-    }
-
-    fun setDismissListener(dismissListener: OnDismissListener) {
-        mDismissListener = dismissListener
-    }
-
-    fun setMessageListener(msg: Any?, listener: OnMessageListener) {
-        mMsg = msg
-        mMessageListener = listener
-    }
-
-    fun setShouldShowTitle(shouldShow: Boolean) {
-        mShouldShowTitle = shouldShow
-    }
-
-    fun setTitle(title: String) {
-        mTitle = title
-    }
-
-    fun setTitleSize(size: Float) {
-        mTitleSize = size
-    }
-
     fun setContent(content: String) {
         mContent = content
     }
 
-    fun isHtml(isHtml: Boolean) {
-        mIsHtml = isHtml
-    }
-
-    fun setConfigText(configText: String) {
-        mConfirmText = configText
-    }
-
-    fun setCancelText(cancelText: String) {
-        mCancelText = cancelText
-    }
-
-    fun setIsShowConfig(isShowConfig: Boolean) {
-        mIsShowConfig = isShowConfig
+    fun setTitle(title: String) {
+        mTitle = title
     }
 
     override fun initView() {
@@ -125,9 +82,7 @@ open class CommonDialog(context: Context) : BaseDialog(context) {
         }
     }
 
-    override fun initData() {
-
-    }
+    override fun initData() {}
 
     override fun initListener() {
         mBinding.mCancelTv.setOnClickListener {
@@ -185,80 +140,3 @@ open class CommonDialog(context: Context) : BaseDialog(context) {
     }
 
 }
-
-/**
- * 挂起同步的选择框操作
- */
-suspend fun dialogCommonShowSuspend(
-    context: Context, title: String? = null, content: String? = null, cancelText: String? = null,
-    confirmText: String? = null
-) =
-    suspendCancellableCoroutine<Boolean> {
-        val dialog = CommonDialog(context)
-        if (!title.isNullOrEmpty()) dialog.setTitle(title)
-        if (!content.isNullOrEmpty()) dialog.setContent(content)
-        if (!cancelText.isNullOrEmpty()) dialog.setCancelText(cancelText)
-        if (!confirmText.isNullOrEmpty()) dialog.setConfigText(confirmText)
-        dialog.setListener(object : CommonDialog.OnDialogClickListener {
-            override fun onCancel() {
-                if (it.isActive) it.resume(false)
-            }
-
-            override fun onOk() {
-                if (it.isActive) it.resume(true)
-            }
-        })
-        dialog.show()
-        it.invokeOnCancellation {
-            dialog.dismiss()
-        }
-    }
-
-/**
- * 挂起同步的选择框操作
- */
-suspend fun dialogCommonShowSuspend(
-    context: Context,
-    title: String? = null,
-    content: String? = null,
-    content2: String? = null,
-    cancelText: String? = null,
-    confirmText: String? = null
-) =
-    suspendCancellableCoroutine<Boolean> {
-        val dialog = CommonDialog(context)
-        if (!title.isNullOrEmpty()) dialog.setTitle(title)
-        if (!content.isNullOrEmpty()) dialog.setContent(content)
-        if (!cancelText.isNullOrEmpty()) dialog.setCancelText(cancelText)
-        if (!confirmText.isNullOrEmpty()) dialog.setConfigText(confirmText)
-        if (!content2.isNullOrEmpty()) {
-            val textView = TextView(context)
-            textView.setTextColor(Color.BLACK)
-            textView.textSize = 12f
-            textView.text = content2
-            textView.gravity = Gravity.CENTER
-            dialog.mBindingBuilder = {
-                it.mContentLayout.addView(textView,
-                    LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        topMargin = SizeUtils.dp2px(14f)
-                        gravity = Gravity.CENTER
-                    })
-            }
-        }
-        dialog.setListener(object : CommonDialog.OnDialogClickListener {
-            override fun onCancel() {
-                if (it.isActive) it.resume(false)
-            }
-
-            override fun onOk() {
-                if (it.isActive) it.resume(true)
-            }
-        })
-        dialog.show()
-        it.invokeOnCancellation {
-            dialog.dismiss()
-        }
-    }

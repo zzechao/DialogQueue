@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
+        android:layout_marginBottom="100dp"
         android:text="firstFragment" />
 
     <Button
@@ -25,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
+        android:layout_marginBottom="100dp"
         android:text="secondFragment" />
 
 
@@ -33,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="200dp"
+        android:layout_marginBottom="250dp"
         android:text="addDefaultDialogQueue" />
 
 
@@ -42,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="160dp"
+        android:layout_marginBottom="200dp"
         android:text="CommonDialogFactory" />
 
     <Button
@@ -50,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="150dp"
         android:text="CommonDialogFactory2" />
 
     <Button
@@ -58,6 +60,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="100dp"
         android:text="CommonDialogFactory3" />
+
+    <Button
+        android:id="@+id/bt_add_factory4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="50dp"
+        android:text="CommonDialogFactory4" />
 </FrameLayout>

@@ -69,8 +69,14 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
             val diff = dialog2.priority() - dialog1.priority()
             return@Comparator if (diff == 0) {
                 val diff2 = dialog1.dialogID - dialog2.dialogID
-                diff2 / abs(diff2)
+                logger.i("queue diff2:$diff2")
+                if (diff2 == 0) {
+                    0
+                } else {
+                    diff2 / abs(diff2)
+                }
             } else {
+                logger.i("queue diff:$diff")
                 diff / abs(diff)
             }
         })

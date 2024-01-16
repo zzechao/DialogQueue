@@ -9,6 +9,7 @@ import com.zhouz.dialogqueue.IBuildFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
+import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class BaseDialogActivityBuilderFactory : IBuildFactory<ComponentActivity>, DefaultLifecycleObserver {
     override var mDialog: ComponentActivity? = null
@@ -17,7 +18,7 @@ abstract class BaseDialogActivityBuilderFactory : IBuildFactory<ComponentActivit
 
     override val dialogID: Int = DialogQueueActivityDeal.getDialogId()
 
-    override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> = mutableSetOf()
+    override val mDialogDismissListeners: CopyOnWriteArrayList<WeakReference<DialogDismissListener>> = CopyOnWriteArrayList()
 
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false

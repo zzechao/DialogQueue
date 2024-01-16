@@ -20,6 +20,7 @@ private var index = 0
 class FragmentDialogFactory4 : BaseDialogFragmentBuilderFactory() {
     override suspend fun buildDialog(activity: Activity, extra: String): DialogFragment {
         val content = "测试 FragmentDialogFactory4 ${index + 1}"
+        index += 1
         val fragmentDialog = FragmentDialog.newInstance(extra, content)
         fragmentDialog.show((activity as FragmentActivity).supportFragmentManager, "FragmentDialog")
         return fragmentDialog

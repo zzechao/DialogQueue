@@ -3,6 +3,7 @@ package com.zhouz.dialogqueue
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import java.lang.ref.WeakReference
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass
 
 /**
@@ -39,7 +40,7 @@ interface IBuildFactory<T> {
     /**
      * dismiss的监听
      */
-    val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>>
+    val mDialogDismissListeners: CopyOnWriteArrayList<WeakReference<DialogDismissListener>>
 
     /**
      * 绑定的activity

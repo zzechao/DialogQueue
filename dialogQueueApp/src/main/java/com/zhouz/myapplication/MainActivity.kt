@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
     override var secondFragment: SecondFragment? = null
 
-    private var factory: MutableList<out IBuildFactory<out Any>> = Constant.common
+    private var factory: MutableList<Class<out IBuildFactory<*>>> = Constant.common
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,19 +87,19 @@ class MainActivity : AppCompatActivity(), IShowFragment {
         }
 
         findViewById<View>(R.id.bt_add_factory1).setOnClickListener {
-            DialogEx.addDialogBuilderFactory(factory[0])
+            DialogEx.addDialogBuilderFactory(factory[0].getDeclaredConstructor().newInstance())
         }
 
         findViewById<View>(R.id.bt_add_factory2).setOnClickListener {
-            DialogEx.addDialogBuilderFactory(factory[1])
+            DialogEx.addDialogBuilderFactory(factory[1].getDeclaredConstructor().newInstance())
         }
 
         findViewById<View>(R.id.bt_add_factory3).setOnClickListener {
-            DialogEx.addDialogBuilderFactory(factory[2])
+            DialogEx.addDialogBuilderFactory(factory[2].getDeclaredConstructor().newInstance())
         }
 
         findViewById<View>(R.id.bt_add_factory4).setOnClickListener {
-            DialogEx.addDialogBuilderFactory(factory[3])
+            DialogEx.addDialogBuilderFactory(factory[3].getDeclaredConstructor().newInstance())
         }
 
         val radgroup = findViewById<RadioGroup>(R.id.radioGroup)

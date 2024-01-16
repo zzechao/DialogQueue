@@ -32,7 +32,7 @@ object DialogEx {
     /**
      * 创建保活的activity弹窗构建
      */
-    fun addDialogBuilderFactory(factory: IBuildFactory<out Any>): Int {
+    fun addDialogBuilderFactory(factory: IBuildFactory<*>): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
         return factory.dialogID
     }

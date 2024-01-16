@@ -65,7 +65,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     private val isRunQueue = AtomicBoolean(false)
 
     private val queue =
-        PriorityBlockingQueue<IBuildFactory<out Any>>(20, Comparator { dialog1, dialog2 ->
+        PriorityBlockingQueue<IBuildFactory<*>>(20, Comparator { dialog1, dialog2 ->
             val diff = dialog2.priority() - dialog1.priority()
             return@Comparator if (diff == 0) {
                 val diff2 = dialog1.dialogID - dialog2.dialogID
@@ -84,15 +84,15 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     /**
      * 不是对应Activity的弹窗
      */
-    private val deActivityList = mutableListOf<IBuildFactory<out Any>>()
+    private val deActivityList = mutableListOf<IBuildFactory<*>>()
 
-    private val deFragmentList = mutableListOf<IBuildFactory<out Any>>()
+    private val deFragmentList = mutableListOf<IBuildFactory<*>>()
 
     fun getDialogId(): Int {
         return dialogIdAtomic.incrementAndGet()
     }
 
-    fun addDialogBuilder(factory: IBuildFactory<out Any>) {
+    fun addDialogBuilder(factory: IBuildFactory<*>) {
         logger.i("addDialogBuilder extra:${factory.extra} id:${factory.dialogID}")
         queue.offer(factory)
         showQueueDialog()
@@ -352,6 +352,12 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
             val dialog = withContext(Dispatchers.Main) {
                 logger.i("showQueueDialog buildDialog")
                 buildDialog(activity, this@showDialog.extra)
+            }
+            if (dialog !is IDialogQ) {
+                if (isShow.compareAndSet(true, false)) {
+                    showQueueDialog()
+                }
+                return
             }
             logger.i("showQueueDialog attachDialogDismiss dialog:$dialog")
             this.mDialog = dialog

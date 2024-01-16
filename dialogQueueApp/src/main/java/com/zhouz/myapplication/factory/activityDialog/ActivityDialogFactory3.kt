@@ -17,6 +17,8 @@ import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 
+private var index = 0
+
 class ActivityDialogFactory3 : BaseDialogActivityBuilderFactory() {
     override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
         return withTimeout(2000L) {
@@ -27,8 +29,11 @@ class ActivityDialogFactory3 : BaseDialogActivityBuilderFactory() {
                         activity.application.unregisterActivityLifecycleCallbacks(this)
                     }
                 }
+                val content = "测试 ActivityDialogFactory ${index + 1}"
+                index += 1
                 activity.application.registerActivityLifecycleCallbacks(callbacks)
                 val intent = Intent(activity, ActivityDialog::class.java)
+                intent.putExtra("content", content)
                 activity.startActivity(intent)
                 it.invokeOnCancellation {
                     activity.application.unregisterActivityLifecycleCallbacks(callbacks)

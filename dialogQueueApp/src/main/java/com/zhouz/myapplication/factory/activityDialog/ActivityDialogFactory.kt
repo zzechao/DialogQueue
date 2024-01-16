@@ -33,8 +33,11 @@ class ActivityDialogFactory : BaseDialogActivityBuilderFactory() {
                         activity.application.unregisterActivityLifecycleCallbacks(this)
                     }
                 }
+                val content = "测试 ActivityDialogFactory ${index + 1}"
+                index += 1
                 activity.application.registerActivityLifecycleCallbacks(callbacks)
                 val intent = Intent(activity, ActivityDialog::class.java)
+                intent.putExtra("content", content)
                 activity.startActivity(intent)
                 it.invokeOnCancellation {
                     activity.application.unregisterActivityLifecycleCallbacks(callbacks)

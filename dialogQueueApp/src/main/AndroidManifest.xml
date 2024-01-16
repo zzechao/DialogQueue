@@ -21,6 +21,9 @@
         <activity
             android:name=".SecondActivity"
             android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".dialog.ActivityDialog"
+            android:theme="@style/dialog_style" />
     </application>
 
 </manifest>

@@ -1,16 +1,20 @@
 package com.zhouz.myapplication
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import com.zhouz.dialogqueue.DefaultActivityLifecycleCallbacks
 import com.zhouz.dialogqueue.DialogEx
 import com.zhouz.dialogqueue.IBuildFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
+import com.zhouz.myapplication.dialog.ActivityDialog
 import com.zhouz.myapplication.dialog.CommonDialog
 import com.zhouz.myapplication.dialog.FragmentDialog
 import com.zhouz.myapplication.factory.Constant
@@ -18,6 +22,9 @@ import com.zhouz.myapplication.fragment.FirstFragment
 import com.zhouz.myapplication.fragment.SecondFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.resume
 
 
 class MainActivity : AppCompatActivity(), IShowFragment {
@@ -60,7 +67,7 @@ class MainActivity : AppCompatActivity(), IShowFragment {
                                 logger.i("CommonDialog builde $extra")
                                 val dialog = CommonDialog(activity)
                                 dialog.setTitle("CommonDialog")
-                                dialog.setContent("测试 local $extra")
+                                dialog.setContent("测试 addCommonDialog $extra")
                                 dialog.show()
                                 dialog
                             }
@@ -69,7 +76,7 @@ class MainActivity : AppCompatActivity(), IShowFragment {
                         R.id.btnFragment -> {
                             DialogEx.addFragmentDialog("${index + 1}") { activity, extra ->
                                 logger.i("FragmentDialog builde $extra")
-                                val content = "测试 local $extra"
+                                val content = "测试 addFragmentDialog $extra"
                                 val fragmentDialog = FragmentDialog.newInstance(extra, content)
                                 fragmentDialog.show((activity as FragmentActivity).supportFragmentManager, "FragmentDialog")
                                 fragmentDialog
@@ -77,6 +84,27 @@ class MainActivity : AppCompatActivity(), IShowFragment {
                         }
 
                         R.id.btnActivity -> {
+                            DialogEx.addActivityDialog("${index + 1}") { activity, extra ->
+                                logger.i("FragmentDialog builde $extra")
+                                withTimeout(2000L) {
+                                    suspendCancellableCoroutine {
+                                        val callbacks = object : DefaultActivityLifecycleCallbacks {
+                                            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                                                it.resume(activity as ComponentActivity)
+                                                activity.application.unregisterActivityLifecycleCallbacks(this)
+                                            }
+                                        }
+                                        val content = "测试 addActivityDialog $extra"
+                                        activity.application.registerActivityLifecycleCallbacks(callbacks)
+                                        val intent = Intent(activity, ActivityDialog::class.java)
+                                        intent.putExtra("content", content)
+                                        activity.startActivity(intent)
+                                        it.invokeOnCancellation {
+                                            activity.application.unregisterActivityLifecycleCallbacks(callbacks)
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         R.id.btnView -> {

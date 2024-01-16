@@ -13,39 +13,6 @@
         android:layout_gravity="center_horizontal"
         android:text="toSecondActivity" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/btnCommon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="common" />
-
-        <RadioButton
-            android:id="@+id/btnFragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="fragment" />
-
-        <RadioButton
-            android:id="@+id/btnActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="activity" />
-
-        <RadioButton
-            android:id="@+id/btnView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="view" />
-    </RadioGroup>
 
     <Button
         android:id="@+id/first"
@@ -104,4 +71,39 @@
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="50dp"
         android:text="CommonDialogFactory4" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/btnCommon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="common" />
+
+        <RadioButton
+            android:id="@+id/btnFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fragment" />
+
+        <RadioButton
+            android:id="@+id/btnActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="activity" />
+
+        <RadioButton
+            android:id="@+id/btnView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="view" />
+    </RadioGroup>
+
 </FrameLayout>

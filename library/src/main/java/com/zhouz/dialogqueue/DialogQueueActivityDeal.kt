@@ -32,7 +32,6 @@ import kotlin.math.abs
 object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     DefaultActivityLifecycleCallbacks {
 
-
     private val logger = LoggerFactory.getLogger("DialogQueueActivityDeal")
 
     private val dialogIdAtomic = AtomicInteger(0)
@@ -99,46 +98,54 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
      */
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         logger.i("onActivityCreated activity:${activity::class.java}")
-        queue.removeAll { !it.isKeepALive() }
-        (activity as? FragmentActivity)?.watchFragment()
+        if (activity !is IDialogQ) {
+            queue.removeAll { !it.isKeepALive() }
+            (activity as? FragmentActivity)?.watchFragment()
+        }
     }
 
     override fun onActivityStarted(activity: Activity) {
         logger.i("onActivityStarted activity:${activity::class.java}")
         super.onActivityStarted(activity)
-        mWeakReferenceActivity = activity
+        if (activity !is IDialogQ) {
+            mWeakReferenceActivity = activity
+        }
     }
 
     override fun onActivityResumed(activity: Activity) {
         logger.i("onActivityResumed activity:${activity::class.java}")
         super.onActivityResumed(activity)
-        deActivityList.firstOrNull { it.bindActivity().contains(activity::class) }?.let {
-            job?.cancel()
-            deFragmentList.forEach {
-                queue.offer(it)
-            }
-            deFragmentList.clear()
+        if (activity !is IDialogQ) {
+            deActivityList.firstOrNull { it.bindActivity().contains(activity::class) }?.let {
+                job?.cancel()
+                deFragmentList.forEach {
+                    queue.offer(it)
+                }
+                deFragmentList.clear()
 
-            deActivityList.forEach {
-                queue.offer(it)
+                deActivityList.forEach {
+                    queue.offer(it)
+                }
+                deActivityList.clear()
             }
-            deActivityList.clear()
+            showQueueDialog()
         }
-        showQueueDialog()
     }
 
     override fun onActivityStopped(activity: Activity) {
         logger.i("onActivityStopped activity:${activity::class.java}")
         super.onActivityStopped(activity)
-        if (mWeakReferenceActivity == activity) {
+        if (mWeakReferenceActivity == activity && activity !is IDialogQ) {
             mWeakReferenceActivity = null
         }
     }
 
     override fun onActivityDestroyed(activity: Activity) {
         logger.i("onActivityDestroyed activity:${activity::class.java}")
-        job?.cancel()
-        (activity as? FragmentActivity)?.deWatchFragment()
+        if (activity !is IDialogQ) {
+            job?.cancel()
+            (activity as? FragmentActivity)?.deWatchFragment()
+        }
     }
 
     /**
@@ -147,32 +154,38 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
         logger.i("onFragmentCreated Fragment:${f::class.java}")
         super.onFragmentCreated(fm, f, savedInstanceState)
-        f.watchFragment()
+        if (f !is IDialogQ) {
+            f.watchFragment()
+        }
     }
 
     override fun onFragmentStarted(fm: FragmentManager, f: Fragment) {
         logger.i("onFragmentStarted Fragment:${f::class.java}")
         super.onFragmentStarted(fm, f)
-        mWeakReferenceFragment = f
+        if (f !is IDialogQ) {
+            mWeakReferenceFragment = f
+        }
     }
 
     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
         logger.i("onFragmentResumed Fragment:${f::class.java}")
         super.onFragmentResumed(fm, f)
-        deFragmentList.firstOrNull { it.bindFragment().contains(f::class) }?.let {
-            job?.cancel()
-            deFragmentList.forEach {
-                queue.offer(it)
+        if (f !is IDialogQ) {
+            deFragmentList.firstOrNull { it.bindFragment().contains(f::class) }?.let {
+                job?.cancel()
+                deFragmentList.forEach {
+                    queue.offer(it)
+                }
+                deFragmentList.clear()
             }
-            deFragmentList.clear()
+            showQueueDialog()
         }
-        showQueueDialog()
     }
 
     override fun onFragmentStopped(fm: FragmentManager, f: Fragment) {
         logger.i("onFragmentStopped Fragment:${f::class.java}")
         super.onFragmentStopped(fm, f)
-        if (mWeakReferenceFragment == f) {
+        if (mWeakReferenceFragment == f && f !is IDialogQ) {
             mWeakReferenceFragment = null
         }
     }
@@ -180,7 +193,9 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
         logger.i("onFragmentDestroyed Fragment:${f::class.java}")
         super.onFragmentDestroyed(fm, f)
-        f.deWatchFragment()
+        if (f !is IDialogQ) {
+            f.deWatchFragment()
+        }
     }
 
 

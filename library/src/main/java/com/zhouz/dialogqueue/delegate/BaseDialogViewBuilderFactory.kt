@@ -5,6 +5,8 @@ import androidx.core.view.doOnDetach
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
@@ -16,11 +18,13 @@ abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
 
     override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> = mutableSetOf()
 
-    override fun attachDialogDismiss(): Boolean {
+    override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
-        mDialog?.doOnDetach {
-            mDialogDismissListeners.forEach {
-                it.get()?.invoke()
+        withContext(Dispatchers.Main) {
+            mDialog?.doOnDetach {
+                mDialogDismissListeners.forEach {
+                    it.get()?.invoke()
+                }
             }
         }
         return true

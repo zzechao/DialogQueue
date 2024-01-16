@@ -77,7 +77,7 @@ interface IBuildFactory<T> {
     /**
      * 构建不同类似的dialog的消失方法
      */
-    fun attachDialogDismiss(): Boolean
+    suspend fun attachDialogDismiss(): Boolean
 
     /**
      * 设置dismiss监听

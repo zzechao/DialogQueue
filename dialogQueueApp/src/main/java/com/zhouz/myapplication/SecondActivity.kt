@@ -50,15 +50,15 @@ class SecondActivity : AppCompatActivity(), IShowFragment {
         }
 
         findViewById<View>(R.id.bt_add_factory1).setOnClickListener {
-            DialogEx.addCommonDialog(CommonDialogFactory())
+            DialogEx.addDialogBuilderFactory(CommonDialogFactory())
         }
 
         findViewById<View>(R.id.bt_add_factory2).setOnClickListener {
-            DialogEx.addCommonDialog(CommonDialogFactory2())
+            DialogEx.addDialogBuilderFactory(CommonDialogFactory2())
         }
 
         findViewById<View>(R.id.bt_add_factory3).setOnClickListener {
-            DialogEx.addCommonDialog(CommonDialogFactory3())
+            DialogEx.addDialogBuilderFactory(CommonDialogFactory3())
         }
     }
 }

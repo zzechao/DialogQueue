@@ -5,11 +5,15 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.View
 import com.blankj.utilcode.util.SizeUtils
+import com.zhouz.dialogqueue.IDialogQ
 import com.zhouz.myapplication.databinding.CommonDialogBinding
 import com.zhouz.myapplication.ui.main.BaseDialog
 
 
-open class CommonDialog(context: Context) : BaseDialog(context) {
+/**
+ * 普通弹窗
+ */
+open class CommonDialog(context: Context) : BaseDialog(context), IDialogQ {
     protected lateinit var mBinding: CommonDialogBinding
     override fun onBindLayout(): View {
         mBinding = CommonDialogBinding.inflate(layoutInflater)

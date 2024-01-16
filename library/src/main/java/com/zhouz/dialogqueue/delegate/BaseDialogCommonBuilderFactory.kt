@@ -5,6 +5,8 @@ import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 abstract class BaseDialogCommonBuilderFactory : IBuildFactory<Dialog> {
@@ -20,12 +22,14 @@ abstract class BaseDialogCommonBuilderFactory : IBuildFactory<Dialog> {
     override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> =
         mutableSetOf()
 
-    override fun attachDialogDismiss(): Boolean {
+    override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
         logger.i("attachDialogDismiss mDialog:$mDialog")
-        mDialog?.setOnDismissListener {
-            mDialogDismissListeners.forEach {
-                it.get()?.invoke()
+        withContext(Dispatchers.Main) {
+            mDialog?.setOnDismissListener {
+                mDialogDismissListeners.forEach {
+                    it.get()?.invoke()
+                }
             }
         }
         return true

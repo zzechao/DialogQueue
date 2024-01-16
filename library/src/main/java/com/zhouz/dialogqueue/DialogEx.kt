@@ -30,66 +30,52 @@ object DialogEx {
     }
 
     /**
-     * 创建当前activity的队列弹窗ActivityDialog
-     */
-    fun addActivityDialog(extra: String = "", builder: suspend () -> ComponentActivity): Int {
-        val dialogActivityFactory = object : BaseDialogActivityBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
-                return builder()
-            }
-        }
-        dialogActivityFactory.extra = extra
-        return addActivityDialog(dialogActivityFactory)
-    }
-
-    /**
      * 创建保活的activity弹窗构建
      */
-    fun addActivityDialog(factory: BaseDialogActivityBuilderFactory): Int {
+    fun addDialogBuilderFactory(factory: IBuildFactory<out Any>): Int {
         DialogQueueActivityDeal.addDialogBuilder(factory)
         return factory.dialogID
     }
+
+    /**
+     * 创建当前activity的队列弹窗ActivityDialog
+     */
+    fun addActivityDialog(extra: String = "", builder: suspend (Activity, String) -> ComponentActivity): Int {
+        val dialogActivityFactory = object : BaseDialogActivityBuilderFactory() {
+            override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
+                return builder(activity, extra)
+            }
+        }
+        dialogActivityFactory.extra = extra
+        return addDialogBuilderFactory(dialogActivityFactory)
+    }
+
 
     /**
      * 创建当前activity的队列弹窗ViewDialog
      */
-    fun addViewDialog(extra: String = "", builder: suspend () -> View): Int {
+    fun addViewDialog(extra: String = "", builder: suspend (Activity, String) -> View): Int {
         val dialogViewFactory = object : BaseDialogViewBuilderFactory() {
             override suspend fun buildDialog(activity: Activity, extra: String): View {
-                return builder()
+                return builder(activity, extra)
             }
         }
         dialogViewFactory.extra = extra
-        return addViewDialog(dialogViewFactory)
+        return addDialogBuilderFactory(dialogViewFactory)
     }
 
-    /**
-     * 创建保活的view弹窗构建
-     */
-    fun addViewDialog(factory: BaseDialogViewBuilderFactory): Int {
-        DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogID
-    }
 
     /**
      * 创建当前activity的队列弹窗fragmentDialog
      */
-    fun addFragmentDialog(extra: String = "", builder: suspend () -> DialogFragment): Int {
+    fun addFragmentDialog(extra: String = "", builder: suspend (Activity, String) -> DialogFragment): Int {
         val dialogFragmentFactory = object : BaseDialogFragmentBuilderFactory() {
             override suspend fun buildDialog(activity: Activity, extra: String): DialogFragment {
-                return builder()
+                return builder(activity, extra)
             }
         }
         dialogFragmentFactory.extra = extra
-        return addFragmentDialog(dialogFragmentFactory)
-    }
-
-    /**
-     * 创建保活的fragment弹窗构建
-     */
-    fun addFragmentDialog(factory: BaseDialogFragmentBuilderFactory): Int {
-        DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogID
+        return addDialogBuilderFactory(dialogFragmentFactory)
     }
 
     /**
@@ -102,15 +88,7 @@ object DialogEx {
             }
         }
         commonDialogFragment.extra = extra
-        return addCommonDialog(commonDialogFragment)
-    }
-
-    /**
-     * 创建保活的dialog弹窗构建
-     */
-    fun addCommonDialog(factory: BaseDialogCommonBuilderFactory): Int {
-        DialogQueueActivityDeal.addDialogBuilder(factory)
-        return factory.dialogID
+        return addDialogBuilderFactory(commonDialogFragment)
     }
 
 

@@ -6,6 +6,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 abstract class BaseDialogActivityBuilderFactory : IBuildFactory<ComponentActivity>, DefaultLifecycleObserver {
@@ -17,9 +19,11 @@ abstract class BaseDialogActivityBuilderFactory : IBuildFactory<ComponentActivit
 
     override val mDialogDismissListeners: MutableSet<WeakReference<DialogDismissListener>> = mutableSetOf()
 
-    override fun attachDialogDismiss(): Boolean {
+    override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
-        mDialog?.lifecycle?.addObserver(this)
+        withContext(Dispatchers.Main) {
+            mDialog?.lifecycle?.addObserver(this@BaseDialogActivityBuilderFactory)
+        }
         return true
     }
 

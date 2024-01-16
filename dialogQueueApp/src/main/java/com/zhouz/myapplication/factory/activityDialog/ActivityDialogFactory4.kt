@@ -10,20 +10,13 @@ import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
 import com.zhouz.myapplication.MainActivity
 import com.zhouz.myapplication.dialog.ActivityDialog
 import com.zhouz.myapplication.fragment.FirstFragment
+import com.zhouz.myapplication.fragment.SecondFragment
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 
-
-/**
- * @author:zhouz
- * @date: 2024/1/15 19:01
- * description：TODO
- */
-private var index = 0
-
-class ActivityDialogFactory : BaseDialogActivityBuilderFactory() {
+class ActivityDialogFactory4 : BaseDialogActivityBuilderFactory() {
     override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
         return withTimeout(2000L) {
             suspendCancellableCoroutine {
@@ -44,17 +37,10 @@ class ActivityDialogFactory : BaseDialogActivityBuilderFactory() {
     }
 
     /**
-     * 绑定MainActivity
-     */
-    override fun bindActivity(): Array<KClass<out Activity>> {
-        return arrayOf(MainActivity::class)
-    }
-
-    /**
-     * 绑定FirstFragment
+     * 绑定SecondFragment
      */
     override fun bindFragment(): Array<KClass<out Fragment>> {
-        return arrayOf(FirstFragment::class)
+        return arrayOf(SecondFragment::class)
     }
 
     override fun isKeepALive(): Boolean {

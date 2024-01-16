@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import com.lxj.xpopup.XPopup
 import com.zhouz.dialogqueue.DefaultActivityLifecycleCallbacks
 import com.zhouz.dialogqueue.DialogEx
 import com.zhouz.dialogqueue.IBuildFactory
@@ -17,6 +18,7 @@ import com.zhouz.dialogqueue.log.LoggerFactory
 import com.zhouz.myapplication.dialog.ActivityDialog
 import com.zhouz.myapplication.dialog.CommonDialog
 import com.zhouz.myapplication.dialog.FragmentDialog
+import com.zhouz.myapplication.dialog.ViewDialog
 import com.zhouz.myapplication.factory.Constant
 import com.zhouz.myapplication.fragment.FirstFragment
 import com.zhouz.myapplication.fragment.SecondFragment
@@ -108,6 +110,18 @@ class MainActivity : AppCompatActivity(), IShowFragment {
                         }
 
                         R.id.btnView -> {
+                            DialogEx.addViewDialog("${index + 1}") { activity, extra ->
+                                val content = "测试 addViewDialog $extra"
+                                val view = ViewDialog(activity, content)
+                                XPopup.Builder(activity)
+                                    .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                                    .isViewMode(true)
+                                    .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
+                                    .customHostLifecycle((activity as AppCompatActivity).lifecycle)
+                                    .asCustom(view)
+                                    .show()
+                                view
+                            }
                         }
                     }
                 }

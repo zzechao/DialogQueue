@@ -5,12 +5,16 @@ import androidx.core.view.doOnDetach
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
+import com.zhouz.dialogqueue.log.LoggerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
+
+    open val logger = LoggerFactory.getLogger("BaseDialogViewBuilderFactory")
+
     override var mDialog: View? = null
 
     override var extra: String = ""
@@ -21,8 +25,10 @@ abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
 
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
+        logger.i("attachDialogDismiss")
         withContext(Dispatchers.Main) {
             mDialog?.doOnDetach {
+                logger.i("doOnDetach mDialogDismissListeners:${mDialogDismissListeners.size}")
                 mDialogDismissListeners.forEach {
                     it.get()?.invoke()
                 }

@@ -17,6 +17,12 @@ import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 
+
+/**
+ * @author:zhouz
+ * @date: 2024/1/15 19:01
+ * description：创建指定场景的factory
+ */
 private var index = 0
 
 class ActivityDialogFactory3 : BaseDialogActivityBuilderFactory() {

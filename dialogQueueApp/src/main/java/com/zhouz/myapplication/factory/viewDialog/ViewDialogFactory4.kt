@@ -18,15 +18,18 @@ import kotlin.reflect.KClass
 /**
  * @author:zhouz
  * @date: 2024/1/16 11:15
- * description：TODO
+ * description：XPopup的view弹窗
  */
+private var index = 0
+
 class ViewDialogFactory4 : BaseDialogViewBuilderFactory() {
     override suspend fun buildDialog(activity: Activity, extra: String): View {
-        val view = ViewDialog(activity)
+        val content = "测试 ViewDialogFactory4 ${index + 1}"
+        index += 1
+        val view = ViewDialog(activity, content)
         XPopup.Builder(activity)
             .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
             .isViewMode(true)
-            .hasShadowBg(false) // 去掉半透明背景
             .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
             .customHostLifecycle((activity as AppCompatActivity).lifecycle)
             .asCustom(view)

@@ -73,7 +73,7 @@ interface IBuildFactory<T> {
     /**
      * 构建对应的dialog信息
      */
-    suspend fun buildDialog(activity: Activity, extra: String): T
+    suspend fun buildDialog(activity: Activity, extra: String): T?
 
     /**
      * 构建不同类似的dialog的消失方法

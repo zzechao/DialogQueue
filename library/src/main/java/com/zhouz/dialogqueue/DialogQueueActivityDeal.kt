@@ -354,6 +354,12 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                 logger.i("showQueueDialog buildDialog")
                 buildDialog(activity, this@showDialog.extra)
             }
+            if (dialog == null) {
+                if (isShow.compareAndSet(true, false)) {
+                    showQueueDialog()
+                }
+                return
+            }
             if (dialog !is IDialogQ) {
                 if (isShow.compareAndSet(true, false)) {
                     showQueueDialog()

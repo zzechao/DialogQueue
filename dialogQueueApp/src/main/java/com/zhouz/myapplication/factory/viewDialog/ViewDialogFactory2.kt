@@ -8,12 +8,14 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.zhouz.dialogqueue.delegate.BaseDialogViewBuilderFactory
+import com.zhouz.dialogqueue.safeDoOnAttach
 import com.zhouz.myapplication.SecondActivity
 import com.zhouz.myapplication.dialog.ViewDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 
@@ -26,13 +28,13 @@ import kotlin.reflect.KClass
 private var index = 0
 
 class ViewDialogFactory2 : BaseDialogViewBuilderFactory() {
-    override suspend fun buildDialog(activity: Activity, extra: String): View {
+    override suspend fun buildDialog(activity: Activity, extra: String): View? {
         val content = "测试 ViewDialogFactory2 ${index + 1}"
         index += 1
-        return withTimeout(2000L) {
+        return withTimeoutOrNull(2000L) {
             suspendCancellableCoroutine { con ->
                 val view = ViewDialog(activity, content)
-                view.doOnAttach {
+                val listener = view.safeDoOnAttach {
                     con.resume(it)
                 }
                 XPopup.Builder(activity)
@@ -43,6 +45,7 @@ class ViewDialogFactory2 : BaseDialogViewBuilderFactory() {
                     .asCustom(view)
                     .show()
                 con.invokeOnCancellation {
+                    view.removeOnAttachStateChangeListener(listener)
                     view.dismiss()
                 }
             }

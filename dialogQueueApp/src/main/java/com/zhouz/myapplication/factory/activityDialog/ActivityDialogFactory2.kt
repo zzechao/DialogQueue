@@ -7,12 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
 import com.zhouz.dialogqueue.DefaultActivityLifecycleCallbacks
 import com.zhouz.dialogqueue.delegate.BaseDialogActivityBuilderFactory
+import com.zhouz.dialogqueue.startReturnActivity
 import com.zhouz.myapplication.MainActivity
 import com.zhouz.myapplication.SecondActivity
 import com.zhouz.myapplication.dialog.ActivityDialog
 import com.zhouz.myapplication.fragment.FirstFragment
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 
@@ -24,26 +26,12 @@ import kotlin.reflect.KClass
 private var index = 0
 
 class ActivityDialogFactory2 : BaseDialogActivityBuilderFactory() {
-    override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
-        return withTimeout(2000L) {
-            suspendCancellableCoroutine {
-                val callbacks = object : DefaultActivityLifecycleCallbacks {
-                    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                        it.resume(activity as ComponentActivity)
-                        activity.application.unregisterActivityLifecycleCallbacks(this)
-                    }
-                }
-                val content = "测试 ActivityDialogFactory ${index + 1}"
-                index += 1
-                activity.application.registerActivityLifecycleCallbacks(callbacks)
-                val intent = Intent(activity, ActivityDialog::class.java)
-                intent.putExtra("content", content)
-                activity.startActivity(intent)
-                it.invokeOnCancellation {
-                    activity.application.unregisterActivityLifecycleCallbacks(callbacks)
-                }
-            }
-        }
+    override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity? {
+        val content = "测试 ActivityDialogFactory2 ${index + 1}"
+        index += 1
+        val bundle = Bundle()
+        bundle.putString("content", content)
+        return activity.startReturnActivity(ActivityDialog::class.java, bundle)
     }
 
     /**

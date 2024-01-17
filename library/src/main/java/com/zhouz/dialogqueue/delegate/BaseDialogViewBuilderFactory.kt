@@ -6,6 +6,7 @@ import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
 import com.zhouz.dialogqueue.log.LoggerFactory
+import com.zhouz.dialogqueue.safeDoOnDetach
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
@@ -27,7 +28,7 @@ abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
         if (mDialog == null) return false
         logger.i("attachDialogDismiss mDialog:$mDialog")
         withContext(Dispatchers.Main) {
-            mDialog?.doOnDetach {
+            mDialog?.safeDoOnDetach {
                 logger.i("doOnDetach mDialogDismissListeners:${mDialogDismissListeners.size}")
                 mDialogDismissListeners.forEach {
                     it.get()?.invoke()

@@ -25,7 +25,7 @@ abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
 
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
-        logger.i("attachDialogDismiss")
+        logger.i("attachDialogDismiss mDialog:$mDialog")
         withContext(Dispatchers.Main) {
             mDialog?.doOnDetach {
                 logger.i("doOnDetach mDialogDismissListeners:${mDialogDismissListeners.size}")

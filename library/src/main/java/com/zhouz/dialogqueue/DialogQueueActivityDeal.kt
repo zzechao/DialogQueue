@@ -257,6 +257,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                                 logger.i("action 1 showDialog")
                                 mWeakReferenceActivity?.let {
                                     data.showDialog(it)
+                                    logger.i("action 1 showDialog end")
                                     return@apply
                                 }
                             }

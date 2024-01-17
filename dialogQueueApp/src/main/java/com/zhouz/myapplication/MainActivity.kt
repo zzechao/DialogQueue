@@ -8,6 +8,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnAttach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.lxj.xpopup.XPopup
@@ -111,16 +112,25 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
                         R.id.btnView -> {
                             DialogEx.addViewDialog("${index + 1}") { activity, extra ->
-                                val content = "测试 addViewDialog $extra"
-                                val view = ViewDialog(activity, content)
-                                XPopup.Builder(activity)
-                                    .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                                    .isViewMode(true)
-                                    .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
-                                    .customHostLifecycle((activity as AppCompatActivity).lifecycle)
-                                    .asCustom(view)
-                                    .show()
-                                view
+                                withTimeout(2000L) {
+                                    suspendCancellableCoroutine { con ->
+                                        val content = "测试 addViewDialog $extra"
+                                        val view = ViewDialog(activity, content)
+                                        view.doOnAttach {
+                                            con.resume(it)
+                                        }
+                                        XPopup.Builder(activity)
+                                            .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                                            .isViewMode(true)
+                                            .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
+                                            .customHostLifecycle((activity as AppCompatActivity).lifecycle)
+                                            .asCustom(view)
+                                            .show()
+                                        con.invokeOnCancellation {
+                                            view.dismiss()
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

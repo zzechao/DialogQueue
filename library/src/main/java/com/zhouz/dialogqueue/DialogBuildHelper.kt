@@ -29,9 +29,10 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, t
                 val callbacks = object : DefaultActivityLifecycleCallbacks {
                     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                         it.resume(activity as ComponentActivity)
-                        activity.application.unregisterActivityLifecycleCallbacks(this)
+                        this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(this)
                     }
                 }
+                this@startReturnActivity.application.registerActivityLifecycleCallbacks(callbacks)
                 val intent = Intent(this@startReturnActivity, cls)
                 intent.putExtras(bundle)
                 this@startReturnActivity.startActivity(intent)

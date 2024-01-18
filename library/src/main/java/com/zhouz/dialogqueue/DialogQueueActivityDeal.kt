@@ -270,6 +270,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                                         logger.i("action 2 showDialog")
                                         mWeakReferenceActivity?.let {
                                             data.showDialog(it)
+                                            logger.i("action 2 showDialog end")
                                             return@apply
                                         }
                                     }
@@ -354,6 +355,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                 logger.i("showQueueDialog buildDialog")
                 buildDialog(activity, this@showDialog.extra)
             }
+            logger.i("showQueueDialog buildDialog end dialog:$dialog")
             if (dialog == null) {
                 if (isShow.compareAndSet(true, false)) {
                     showQueueDialog()
@@ -366,7 +368,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                 }
                 return
             }
-            logger.i("showQueueDialog attachDialogDismiss dialog:$dialog")
+            logger.i("showQueueDialog attachDialogDismiss")
             this.mDialog = dialog
             if (!attachDialogDismiss()) {
                 if (isShow.compareAndSet(true, false)) {

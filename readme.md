@@ -43,7 +43,8 @@ model build.gradle添加
 #### 添加activityDialog
 ```kotlin
     /**
-     * 调用DialogEx的addActivityDialog方法添加ActivityDialog进队列, builder要用到Coroutines的suspendCancellableCoroutine返回activity的对象
+     * 调用DialogEx的addActivityDialog方法添加ActivityDialog进队列, 
+     * builder要用到Coroutines的suspendCancellableCoroutine返回activity的对象（com.zhouz.dialogqueue.DialogEx.addActivityDialog）
      * @param extra 传递信息字段
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
@@ -75,11 +76,13 @@ model build.gradle添加
 #### 添加fragmentDialog
 ```kotlin
     /**
-     * 调用DialogEx的addFragmentDialog方法添加FragmentDialog进队列
+     * 调用DialogEx的addFragmentDialog方法添加FragmentDialog进队列（com.zhouz.dialogqueue.DialogEx.addFragmentDialog）
      * @param extra 传递信息字段
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
+    fun addFragmentDialog(extra: String = "", builder: suspend (Activity, String) -> DialogFragment): Int
+
     DialogEx.addFragmentDialog("${index + 1}") { activity, extra ->
         val content = "测试 addFragmentDialog $extra"
         val fragmentDialog = FragmentDialog.newInstance(extra, content)
@@ -91,11 +94,13 @@ model build.gradle添加
 #### 添加commonDialog
 ```kotlin
     /**
-     * 调用DialogEx的addCommonDialog方法添加CommonDialog进队列
+     * 调用DialogEx的addCommonDialog方法添加CommonDialog进队列（com.zhouz.dialogqueue.DialogEx.addCommonDialog）
      * @param extra 传递信息字段
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
+    fun addCommonDialog(extra: String = "", builder: suspend (Activity, String) -> Dialog): Int
+
     DialogEx.addCommonDialog("${index + 1}") { activity, extra ->
         val dialog = CommonDialog(activity)
         dialog.setTitle("CommonDialog")
@@ -109,11 +114,14 @@ model build.gradle添加
 ```kotlin
     /**
      * 调用DialogEx的addViewDialog方法添加ViewDialog进队列, 
-     * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，这里用了XPopup快速开发
+     * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，
+     * 这里用了XPopup快速开发（com.zhouz.dialogqueue.DialogEx.addViewDialog）
      * @param extra 传递信息字段
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
+    fun addViewDialog(extra: String = "", builder: suspend (Activity, String) -> View): Int
+
     DialogEx.addViewDialog("${index + 1}") { activity, extra ->
         withTimeout(2000L) {
             suspendCancellableCoroutine { con ->

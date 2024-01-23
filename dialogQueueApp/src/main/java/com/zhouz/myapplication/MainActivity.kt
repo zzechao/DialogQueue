@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
                         R.id.btnActivity -> {
                             DialogEx.addActivityDialog("${index + 1}") { activity, extra ->
-                                logger.i("FragmentDialog builde $extra")
                                 withTimeout(2000L) {
                                     suspendCancellableCoroutine {
                                         val callbacks = object : DefaultActivityLifecycleCallbacks {

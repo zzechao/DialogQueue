@@ -16,8 +16,8 @@
 
 ```groovy
     repositories {
-    mavenCentral()
-}
+        mavenCentral()
+    }
 ```
 
 model build.gradle添加

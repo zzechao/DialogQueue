@@ -14,7 +14,7 @@ ext {
     path=
         PUBLISH_GROUP_ID = 'io.github.zzechao'
     PUBLISH_ARTIFACT_ID = 'dialogqueue'
-    PUBLISH_VERSION = '1.0.1'
+    PUBLISH_VERSION = '1.0.1.1'
 }
 
 //--- 修改配置二 ---

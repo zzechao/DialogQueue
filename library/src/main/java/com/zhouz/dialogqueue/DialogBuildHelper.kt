@@ -30,14 +30,41 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, t
             suspendCancellableCoroutine {
                 val callbacks = object : DefaultActivityLifecycleCallbacks {
                     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                        it.resume(activity as ComponentActivity)
-                        this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(this)
+                        if (cls.simpleName == activity::class.simpleName) {
+                            it.resume(activity as ComponentActivity)
+                            this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(this)
+                        }
                     }
                 }
                 this@startReturnActivity.application.registerActivityLifecycleCallbacks(callbacks)
                 val intent = Intent(this@startReturnActivity, cls)
                 intent.putExtras(bundle)
                 this@startReturnActivity.startActivity(intent)
+                it.invokeOnCancellation {
+                    this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(callbacks)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 上层构建 activity file的创建 ， 并挂起等待绑定
+ */
+suspend inline fun Activity.startReturnActivity(cls: Class<*>, timeOut: Long = 2000L, crossinline builder: () -> Unit): ComponentActivity? {
+    return checkWithDispatchersMain {
+        withTimeoutOrNull(timeOut) {
+            suspendCancellableCoroutine {
+                val callbacks = object : DefaultActivityLifecycleCallbacks {
+                    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                        if (cls.simpleName == activity::class.simpleName) {
+                            it.resume(activity as ComponentActivity)
+                            this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(this)
+                        }
+                    }
+                }
+                this@startReturnActivity.application.registerActivityLifecycleCallbacks(callbacks)
+                builder.invoke()
                 it.invokeOnCancellation {
                     this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(callbacks)
                 }

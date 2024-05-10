@@ -66,7 +66,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
 
     private val queue =
         PriorityBlockingQueue<IBuildFactory<*>>(20, Comparator { dialog1, dialog2 ->
-            val diff = dialog2.priority() - dialog1.priority()
+            val diff = dialog2.priority - dialog1.priority
             return@Comparator if (diff == 0) {
                 val diff2 = dialog1.dialogID - dialog2.dialogID
                 logger.i("queue diff2:$diff2")
@@ -351,7 +351,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                 }
             }
             logger.i("showQueueDialog factory:$this")
-            val dialog = withContext(Dispatchers.Main) {
+            val dialog = checkWithDispatchersMain {
                 logger.i("showQueueDialog buildDialog")
                 buildDialog(activity, this@showDialog.extra)
             }

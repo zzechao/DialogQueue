@@ -40,11 +40,13 @@ object DialogEx {
     /**
      * 创建当前activity的队列弹窗ActivityDialog
      */
-    fun addActivityDialog(extra: String = "", builder: suspend (Activity, String) -> ComponentActivity): Int {
+    fun addActivityDialog(extra: String = "", priority: Int = 1, builder: suspend (Activity, String) -> ComponentActivity?): Int {
         val dialogActivityFactory = object : BaseDialogActivityBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity {
+            override suspend fun buildDialog(activity: Activity, extra: String): ComponentActivity? {
                 return builder(activity, extra)
             }
+
+            override var priority: Int = priority
         }
         dialogActivityFactory.extra = extra
         return addDialogBuilderFactory(dialogActivityFactory)
@@ -54,11 +56,13 @@ object DialogEx {
     /**
      * 创建当前activity的队列弹窗ViewDialog
      */
-    fun addViewDialog(extra: String = "", builder: suspend (Activity, String) -> View): Int {
+    fun addViewDialog(extra: String = "", priority: Int = 1, builder: suspend (Activity, String) -> View): Int {
         val dialogViewFactory = object : BaseDialogViewBuilderFactory() {
-            override suspend fun buildDialog(activity: Activity, extra: String): View {
-                return builder(activity, extra)
+            override suspend fun buildDialog(activity: Activity, extra: String): View? {
+                return builder(activity, extra).viewAttachWindowAwait()
             }
+
+            override var priority: Int = priority
         }
         dialogViewFactory.extra = extra
         return addDialogBuilderFactory(dialogViewFactory)
@@ -68,11 +72,13 @@ object DialogEx {
     /**
      * 创建当前activity的队列弹窗fragmentDialog
      */
-    fun addFragmentDialog(extra: String = "", builder: suspend (Activity, String) -> DialogFragment): Int {
+    fun addFragmentDialog(extra: String = "", priority: Int = 1, builder: suspend (Activity, String) -> DialogFragment): Int {
         val dialogFragmentFactory = object : BaseDialogFragmentBuilderFactory() {
             override suspend fun buildDialog(activity: Activity, extra: String): DialogFragment {
                 return builder(activity, extra)
             }
+
+            override var priority: Int = priority
         }
         dialogFragmentFactory.extra = extra
         return addDialogBuilderFactory(dialogFragmentFactory)
@@ -81,11 +87,13 @@ object DialogEx {
     /**
      * 创建当前activity的队列弹窗Dialog
      */
-    fun addCommonDialog(extra: String = "", builder: suspend (Activity, String) -> Dialog): Int {
+    fun addCommonDialog(extra: String = "", priority: Int = 1, builder: suspend (Activity, String) -> Dialog): Int {
         val commonDialogFragment = object : BaseDialogCommonBuilderFactory() {
             override suspend fun buildDialog(activity: Activity, extra: String): Dialog {
                 return builder.invoke(activity, extra)
             }
+
+            override var priority: Int = priority
         }
         commonDialogFragment.extra = extra
         return addDialogBuilderFactory(commonDialogFragment)

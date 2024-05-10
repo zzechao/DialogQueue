@@ -3,12 +3,14 @@ package com.zhouz.dialogqueue
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
@@ -23,7 +25,7 @@ import kotlin.coroutines.resume
  * 启动对应的activity 的dialog，并返回activity对象
  */
 suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, timeOut: Long = 2000L): ComponentActivity? {
-    return withContext(Dispatchers.Main) {
+    return checkWithDispatchersMain {
         withTimeoutOrNull(timeOut) {
             suspendCancellableCoroutine {
                 val callbacks = object : DefaultActivityLifecycleCallbacks {
@@ -38,6 +40,24 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, t
                 this@startReturnActivity.startActivity(intent)
                 it.invokeOnCancellation {
                     this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(callbacks)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 挂起等待view的attachWindow
+ */
+suspend inline fun View.viewAttachWindowAwait(timeOut: Long = 2000L): View? {
+    return checkWithDispatchersMain {
+        withTimeout(timeOut) {
+            suspendCancellableCoroutine { con ->
+                val listener = this@viewAttachWindowAwait.safeDoOnAttach {
+                    con.resume(it)
+                }
+                con.invokeOnCancellation {
+                    this@viewAttachWindowAwait.removeOnAttachStateChangeListener(listener)
                 }
             }
         }
@@ -78,4 +98,12 @@ inline fun View.safeDoOnDetach(crossinline action: (view: View) -> Unit): View.O
         addOnAttachStateChangeListener(listener)
     }
     return listener
+}
+
+suspend inline fun <T> checkWithDispatchersMain(crossinline action: suspend () -> T): T {
+    return if (Thread.currentThread() == Looper.getMainLooper().thread) {
+        action()
+    } else {
+        withContext(Dispatchers.Main) { action() }
+    }
 }

@@ -33,9 +33,8 @@ interface IBuildFactory<T> {
     /**
      * 优先级
      */
-    fun priority(): Int {
-        return 1
-    }
+    var priority: Int
+
 
     /**
      * dismiss的监听

@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    //id("maven-publish")
 }
 apply {
     from("${rootProject.projectDir}/publish-mavencentral.gradle")
@@ -34,8 +33,8 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        cacheDynamicVersionsFor(0,"seconds")
-        cacheChangingModulesFor(0,"seconds")
+        cacheDynamicVersionsFor(0, "seconds")
+        cacheChangingModulesFor(0, "seconds")
     }
 }
 
@@ -56,5 +55,14 @@ dependencies {
 //    }
 //    repositories {
 //        maven(uri("../maven-repo/"))
+//    }
+//}
+
+//val task = tasks.find { it.name == "publishToMavenLocal" }
+//task?.doFirst {
+//    publishing {
+//        repositories {
+//            maven(uri("../maven-repo/"))
+//        }
 //    }
 //}

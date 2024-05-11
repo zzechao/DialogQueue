@@ -3,10 +3,10 @@ package com.zhouz.dialogqueue
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Looper
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.core.view.ViewCompat
+import com.zhouz.dialogqueue.log.LoggerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -21,11 +21,12 @@ import kotlin.coroutines.resume
  * description：弹窗公共方法
  */
 
+
 /**
  * 启动对应的activity 的dialog，并返回activity对象
  */
 suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, timeOut: Long = 2000L): ComponentActivity? {
-    return checkWithDispatchersMain {
+    return withContext(Dispatchers.Main) {
         withTimeoutOrNull(timeOut) {
             suspendCancellableCoroutine {
                 val callbacks = object : DefaultActivityLifecycleCallbacks {
@@ -52,12 +53,14 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, bundle: Bundle, t
  * 上层构建 activity file的创建 ， 并挂起等待绑定
  */
 suspend inline fun Activity.startReturnActivity(cls: Class<*>, timeOut: Long = 2000L, crossinline builder: () -> Unit): ComponentActivity? {
-    return checkWithDispatchersMain {
+    return withContext(Dispatchers.Main) {
         withTimeoutOrNull(timeOut) {
             suspendCancellableCoroutine {
                 val callbacks = object : DefaultActivityLifecycleCallbacks {
                     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                        LoggerFactory.getLogger("DialogQueueActivityDeal").i("startReturnActivity cls:$cls activity:$activity")
                         if (cls.simpleName == activity::class.simpleName) {
+                            LoggerFactory.getLogger("DialogQueueActivityDeal").i("startReturnActivity cls:$cls resume")
                             it.resume(activity as ComponentActivity)
                             this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(this)
                         }
@@ -66,6 +69,7 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, timeOut: Long = 2
                 this@startReturnActivity.application.registerActivityLifecycleCallbacks(callbacks)
                 builder.invoke()
                 it.invokeOnCancellation {
+                    LoggerFactory.getLogger("DialogQueueActivityDeal").i("invokeOnCancellation")
                     this@startReturnActivity.application.unregisterActivityLifecycleCallbacks(callbacks)
                 }
             }
@@ -77,7 +81,7 @@ suspend inline fun Activity.startReturnActivity(cls: Class<*>, timeOut: Long = 2
  * 挂起等待view的attachWindow
  */
 suspend inline fun View.viewAttachWindowAwait(timeOut: Long = 2000L): View? {
-    return checkWithDispatchersMain {
+    return withContext(Dispatchers.Main) {
         withTimeout(timeOut) {
             suspendCancellableCoroutine { con ->
                 val listener = this@viewAttachWindowAwait.safeDoOnAttach {
@@ -125,12 +129,4 @@ inline fun View.safeDoOnDetach(crossinline action: (view: View) -> Unit): View.O
         addOnAttachStateChangeListener(listener)
     }
     return listener
-}
-
-suspend inline fun <T> checkWithDispatchersMain(crossinline action: suspend () -> T): T {
-    return if (Thread.currentThread() == Looper.getMainLooper().thread) {
-        action()
-    } else {
-        withContext(Dispatchers.Main) { action() }
-    }
 }

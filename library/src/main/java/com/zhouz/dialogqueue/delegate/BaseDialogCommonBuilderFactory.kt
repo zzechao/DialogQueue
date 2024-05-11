@@ -4,7 +4,6 @@ import android.app.Dialog
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
-import com.zhouz.dialogqueue.checkWithDispatchersMain
 import com.zhouz.dialogqueue.log.LoggerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +28,7 @@ abstract class BaseDialogCommonBuilderFactory : IBuildFactory<Dialog> {
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
         logger.i("attachDialogDismiss mDialog:$mDialog")
-        checkWithDispatchersMain {
+        withContext(Dispatchers.Main) {
             mDialog?.setOnDismissListener {
                 mDialogDismissListeners.forEach {
                     it.get()?.invoke()

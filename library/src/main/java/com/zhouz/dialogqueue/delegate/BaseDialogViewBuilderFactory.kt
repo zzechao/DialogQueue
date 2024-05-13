@@ -5,6 +5,7 @@ import androidx.core.view.doOnDetach
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
+import com.zhouz.dialogqueue.checkWithDispatchersMain
 import com.zhouz.dialogqueue.log.LoggerFactory
 import com.zhouz.dialogqueue.safeDoOnDetach
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +25,11 @@ abstract class BaseDialogViewBuilderFactory : IBuildFactory<View> {
 
     override val mDialogDismissListeners: CopyOnWriteArrayList<WeakReference<DialogDismissListener>> = CopyOnWriteArrayList()
 
+    override var priority: Int = 1
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
         logger.i("attachDialogDismiss mDialog:$mDialog")
-        withContext(Dispatchers.Main) {
+        checkWithDispatchersMain {
             mDialog?.safeDoOnDetach {
                 logger.i("doOnDetach mDialogDismissListeners:${mDialogDismissListeners.size}")
                 mDialogDismissListeners.forEach {

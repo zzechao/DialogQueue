@@ -17,9 +17,11 @@ open class DefaultLog : ILog {
 
 
     override fun d(tag: String, message: () -> Any?) {
+
     }
 
     override fun d(tag: String, message: String, vararg args: Any?) {
+        Log.d(tag, message.format(*args))
     }
 
 

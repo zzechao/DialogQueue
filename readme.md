@@ -16,8 +16,8 @@
 
 ```groovy
     repositories {
-    mavenCentral()
-}
+        mavenCentral()
+    }
 ```
 
 model build.gradle添加
@@ -102,35 +102,35 @@ model build.gradle添加
 #### 添加viewDialog
 ```kotlin
     /**
- * 调用DialogEx的addViewDialog方法添加ViewDialog进队列,
- * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，
- * 这里用了XPopup快速开发（com.zhouz.dialogqueue.DialogEx.addViewDialog）
- * @param extra 传递信息字段
- * @param priority 优先级
- * @param builder 弹窗对象构建的闭包方法
- * @return 工厂id
- */
-fun addViewDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> View): Int
+     * 调用DialogEx的addViewDialog方法添加ViewDialog进队列, 
+     * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，
+     * 这里用了XPopup快速开发（com.zhouz.dialogqueue.DialogEx.addViewDialog）
+     * @param extra 传递信息字段
+     * @param priority 优先级
+     * @param builder 弹窗对象构建的闭包方法
+     * @return 工厂id
+     */
+    fun addViewDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> View): Int
 
-DialogEx.addViewDialog("${index + 1}") { activity, extra ->
-    withTimeout(2000L) {
-        suspendCancellableCoroutine { con ->
-            val content = "测试 addViewDialog $extra"
-            val view = ViewDialog(activity, content)
-            view.doOnAttach {
-                con.resume(it)
-            }
-            XPopup.Builder(activity)
-                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                .isViewMode(true)
-                .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
-                .customHostLifecycle((activity as AppCompatActivity).lifecycle)
-                .asCustom(view)
-                .show()
-            con.invokeOnCancellation {
-                view.dismiss()
+    DialogEx.addViewDialog("${index + 1}") { activity, extra ->
+        withTimeout(2000L) {
+            suspendCancellableCoroutine { con ->
+                val content = "测试 addViewDialog $extra"
+                val view = ViewDialog(activity, content)
+                view.doOnAttach {
+                    con.resume(it)
+                }
+                XPopup.Builder(activity)
+                    .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                    .isViewMode(true)
+                    .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
+                    .customHostLifecycle((activity as AppCompatActivity).lifecycle)
+                    .asCustom(view)
+                    .show()
+                con.invokeOnCancellation {
+                    view.dismiss()
+                }
             }
         }
     }
-}
 ```

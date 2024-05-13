@@ -28,8 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="250dp"
-        android:text="addDefaultDialogQueue" />
+        android:layout_marginBottom="420dp"
+        android:text="addDefaultDialogQueue:普通非保活弹窗" />
 
 
     <Button
@@ -37,24 +37,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="200dp"
-        android:text="CommonDialogFactory" />
+        android:layout_marginBottom="320dp"
+        android:text="CommonDialogFactory:弹窗绑定MainActivity的FirstFragment下显示" />
 
     <Button
         android:id="@+id/bt_add_factory2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="150dp"
-        android:text="CommonDialogFactory2" />
+        android:layout_marginBottom="220dp"
+        android:text="CommonDialogFactory2:弹窗绑定SecondActivity下显示" />
 
     <Button
         android:id="@+id/bt_add_factory3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="100dp"
-        android:text="CommonDialogFactory3" />
+        android:layout_marginBottom="120dp"
+        android:text="CommonDialogFactory3:弹窗绑定SecondActivity的SecondFragment下显示" />
 
     <Button
         android:id="@+id/bt_add_factory4"
@@ -62,5 +62,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="50dp"
-        android:text="CommonDialogFactory4" />
+        android:text="CommonDialogFactory4:弹窗绑定SecondFragment下显示" />
 </FrameLayout>

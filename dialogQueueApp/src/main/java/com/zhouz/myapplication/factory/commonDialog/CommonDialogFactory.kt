@@ -22,7 +22,7 @@ class CommonDialogFactory : BaseDialogCommonBuilderFactory() {
 
     override val logger = LoggerFactory.getLogger("CommonDialogFactory")
     override suspend fun buildDialog(activity: Activity, extra: String): Dialog {
-        logger.i("CommonDialog builde $extra")
+        logger.d("CommonDialog builde $extra")
         val dialog = CommonDialog(activity)
         dialog.setTitle("CommonDialog")
         dialog.setContent("测试 CommonDialogFactory ${index + 1}")

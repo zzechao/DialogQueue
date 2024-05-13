@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), IShowFragment {
                     when (mSelectId) {
                         R.id.btnCommon -> {
                             DialogEx.addCommonDialog("${index + 1}") { activity, extra ->
-                                logger.i("CommonDialog builde $extra")
+                                logger.d("CommonDialog builde $extra")
                                 val dialog = CommonDialog(activity)
                                 dialog.setTitle("CommonDialog")
                                 dialog.setContent("测试 addCommonDialog $extra")
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), IShowFragment {
 
                         R.id.btnFragment -> {
                             DialogEx.addFragmentDialog("${index + 1}") { activity, extra ->
-                                logger.i("FragmentDialog builde $extra")
+                                logger.d("FragmentDialog builde $extra")
                                 val content = "测试 addFragmentDialog $extra"
                                 val fragmentDialog = FragmentDialog.newInstance(extra, content)
                                 fragmentDialog.show((activity as FragmentActivity).supportFragmentManager, "FragmentDialog")

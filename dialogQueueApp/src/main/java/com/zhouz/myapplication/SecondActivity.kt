@@ -39,7 +39,7 @@ class SecondActivity : AppCompatActivity(), IShowFragment {
             lifecycleScope.launch(Dispatchers.Main) {
                 repeat(10) { index ->
                     DialogEx.addCommonDialog("${index + 1}") { activity, extra ->
-                        logger.i("CommonDialog builde $extra")
+                        logger.d("CommonDialog builde $extra")
                         val dialog = CommonDialog(activity)
                         dialog.setContent("测试$extra")
                         dialog.show()

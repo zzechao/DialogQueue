@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.zhouz.dialogqueue.DialogDismissListener
 import com.zhouz.dialogqueue.DialogQueueActivityDeal
 import com.zhouz.dialogqueue.IBuildFactory
+import com.zhouz.dialogqueue.checkWithDispatchersMain
 import com.zhouz.dialogqueue.log.LoggerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +29,7 @@ abstract class BaseDialogFragmentBuilderFactory : IBuildFactory<DialogFragment>,
     override suspend fun attachDialogDismiss(): Boolean {
         if (mDialog == null) return false
         logger.i("attachDialogDismiss mDialog:$mDialog")
-        withContext(Dispatchers.Main) {
+        checkWithDispatchersMain {
             mDialog?.lifecycle?.addObserver(this@BaseDialogFragmentBuilderFactory)
         }
         return true

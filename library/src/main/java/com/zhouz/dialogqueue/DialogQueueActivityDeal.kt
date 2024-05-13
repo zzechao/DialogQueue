@@ -40,7 +40,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     private var job: Job? = null
 
     private var loggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
-        logger.e("Coroutine exception occurred. $context", throwable)
+        logger.e("CoroutineException", "Coroutine exception occurred. $context", throwable)
     }
 
     private val dispatcher = ThreadPoolExecutor(
@@ -149,9 +149,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     override fun onActivityDestroyed(activity: Activity) {
         logger.i("onActivityDestroyed activity:${activity::class.java}")
         if (activity !is IDialogQ) {
-            if(mWeakReferenceActivity == activity){
-                job?.cancel()
-            }
+            job?.cancel()
             (activity as? FragmentActivity)?.deWatchFragment()
         }
     }
@@ -168,6 +166,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onFragmentStarted(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentStarted Fragment:${f::class.java}")
         super.onFragmentStarted(fm, f)
         if (f !is IDialogQ) {
             mWeakReferenceFragment = f
@@ -175,6 +174,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentResumed Fragment:${f::class.java}")
         super.onFragmentResumed(fm, f)
         if (f !is IDialogQ) {
             deFragmentList.firstOrNull { it.bindFragment().contains(f::class) }?.let {
@@ -189,6 +189,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onFragmentStopped(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentStopped Fragment:${f::class.java}")
         super.onFragmentStopped(fm, f)
         if (mWeakReferenceFragment == f && f !is IDialogQ) {
             mWeakReferenceFragment = null
@@ -196,6 +197,7 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
     }
 
     override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+        logger.i("onFragmentDestroyed Fragment:${f::class.java}")
         super.onFragmentDestroyed(fm, f)
         if (f !is IDialogQ) {
             f.deWatchFragment()
@@ -254,7 +256,6 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                             data.bindActivity().isEmpty() && data.bindFragment().isEmpty() -> {
                                 logger.i("action 1 showDialog")
                                 mWeakReferenceActivity?.let {
-                                    logger.i("action 1 showDialog middle")
                                     data.showDialog(it)
                                     logger.i("action 1 showDialog end")
                                     return@apply
@@ -342,21 +343,17 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
      * 展示弹窗
      */
     private suspend fun <T> IBuildFactory<T>.showDialog(activity: Activity) {
-        logger.i("showDialog ${isShow.get()}")
         if (isShow.compareAndSet(false, true)) {
-            logger.i("showQueueDialog addOnDismissListener start")
             addOnDismissListener {
-                logger.i("showQueueDialog addOnDismissListener destory")
+                logger.i("showQueueDialog addOnDismissListener")
                 if (isShow.compareAndSet(true, false)) {
                     showQueueDialog()
                 }
             }
             logger.i("showQueueDialog factory:$this")
-            val dialog = withContext(Dispatchers.Main)  {
+            val dialog = checkWithDispatchersMain {
                 logger.i("showQueueDialog buildDialog")
-                buildDialog(activity, this@showDialog.extra).apply {
-                    logger.i("showQueueDialog buildDialog end")
-                }
+                buildDialog(activity, this@showDialog.extra)
             }
             logger.i("showQueueDialog buildDialog end dialog:$dialog")
             if (dialog == null) {
@@ -379,7 +376,6 @@ object DialogQueueActivityDeal : FragmentManager.FragmentLifecycleCallbacks(),
                 }
             }
         }
-        logger.i("showDialog ${isShow.get()} end")
     }
 
     /**

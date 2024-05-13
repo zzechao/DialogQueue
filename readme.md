@@ -16,17 +16,17 @@
 
 ```groovy
     repositories {
-        mavenCentral()
-    }
+    mavenCentral()
+}
 ```
 
 model build.gradle添加
 
 ```groovy
-     implementation "io.github.zzechao:dialogqueue:1.0.0"
+     implementation "io.github.zzechao:dialogqueue:1.0.2.1"
 ```
 
-当前版本：1.0.0
+当前版本：1.0.2.1
 
 ### dialog创建队列弹窗class，都要继承IDialog
 
@@ -46,30 +46,17 @@ model build.gradle添加
      * 调用DialogEx的addActivityDialog方法添加ActivityDialog进队列, 
      * builder要用到Coroutines的suspendCancellableCoroutine返回activity的对象（com.zhouz.dialogqueue.DialogEx.addActivityDialog）
      * @param extra 传递信息字段
+     * @param priority 优先级
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
-    fun addActivityDialog(extra: String = "", builder: suspend (Activity, String) -> ComponentActivity): Int{}
+    fun addActivityDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> ComponentActivity): Int{}
 
     DialogEx.addActivityDialog("${index + 1}") { activity, extra ->
-        withTimeout(2000L) {
-            suspendCancellableCoroutine {
-                val callbacks = object : DefaultActivityLifecycleCallbacks {
-                    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                        it.resume(activity as ComponentActivity)
-                        activity.application.unregisterActivityLifecycleCallbacks(this)
-                    }
-                }
-                val content = "测试 addActivityDialog $extra"
-                activity.application.registerActivityLifecycleCallbacks(callbacks)
-                val intent = Intent(activity, ActivityDialog::class.java)
-                intent.putExtra("content", content)
-                activity.startActivity(intent)
-                it.invokeOnCancellation {
-                    activity.application.unregisterActivityLifecycleCallbacks(callbacks)
-                }
-            }
-        }
+        val content = "测试 addActivityDialog $extra"
+        activity.startReturnActivity(ActivityDialog::class.java, Bundle().apply {
+            putString("content", content)
+        })
     }
 ```
 
@@ -78,10 +65,11 @@ model build.gradle添加
     /**
      * 调用DialogEx的addFragmentDialog方法添加FragmentDialog进队列（com.zhouz.dialogqueue.DialogEx.addFragmentDialog）
      * @param extra 传递信息字段
+     * @param priority 优先级
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
-    fun addFragmentDialog(extra: String = "", builder: suspend (Activity, String) -> DialogFragment): Int
+    fun addFragmentDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> DialogFragment): Int
 
     DialogEx.addFragmentDialog("${index + 1}") { activity, extra ->
         val content = "测试 addFragmentDialog $extra"
@@ -96,10 +84,11 @@ model build.gradle添加
     /**
      * 调用DialogEx的addCommonDialog方法添加CommonDialog进队列（com.zhouz.dialogqueue.DialogEx.addCommonDialog）
      * @param extra 传递信息字段
+     * @param priority 优先级
      * @param builder 弹窗对象构建的闭包方法
      * @return 工厂id
      */
-    fun addCommonDialog(extra: String = "", builder: suspend (Activity, String) -> Dialog): Int
+    fun addCommonDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> Dialog): Int
 
     DialogEx.addCommonDialog("${index + 1}") { activity, extra ->
         val dialog = CommonDialog(activity)
@@ -113,34 +102,35 @@ model build.gradle添加
 #### 添加viewDialog
 ```kotlin
     /**
-     * 调用DialogEx的addViewDialog方法添加ViewDialog进队列, 
-     * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，
-     * 这里用了XPopup快速开发（com.zhouz.dialogqueue.DialogEx.addViewDialog）
-     * @param extra 传递信息字段
-     * @param builder 弹窗对象构建的闭包方法
-     * @return 工厂id
-     */
-    fun addViewDialog(extra: String = "", builder: suspend (Activity, String) -> View): Int
+ * 调用DialogEx的addViewDialog方法添加ViewDialog进队列,
+ * builder要用到Coroutines的suspendCancellableCoroutine在doOnAttach返回view的对象，
+ * 这里用了XPopup快速开发（com.zhouz.dialogqueue.DialogEx.addViewDialog）
+ * @param extra 传递信息字段
+ * @param priority 优先级
+ * @param builder 弹窗对象构建的闭包方法
+ * @return 工厂id
+ */
+fun addViewDialog(extra: String = "", priority: Int = 0 , builder: suspend (Activity, String) -> View): Int
 
-    DialogEx.addViewDialog("${index + 1}") { activity, extra ->
-        withTimeout(2000L) {
-            suspendCancellableCoroutine { con ->
-                val content = "测试 addViewDialog $extra"
-                val view = ViewDialog(activity, content)
-                view.doOnAttach {
-                    con.resume(it)
-                }
-                XPopup.Builder(activity)
-                    .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                    .isViewMode(true)
-                    .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
-                    .customHostLifecycle((activity as AppCompatActivity).lifecycle)
-                    .asCustom(view)
-                    .show()
-                con.invokeOnCancellation {
-                    view.dismiss()
-                }
+DialogEx.addViewDialog("${index + 1}") { activity, extra ->
+    withTimeout(2000L) {
+        suspendCancellableCoroutine { con ->
+            val content = "测试 addViewDialog $extra"
+            val view = ViewDialog(activity, content)
+            view.doOnAttach {
+                con.resume(it)
+            }
+            XPopup.Builder(activity)
+                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                .isViewMode(true)
+                .isLightStatusBar(true)// 是否是亮色状态栏，默认false;亮色模式下，状态栏图标和文字是黑色
+                .customHostLifecycle((activity as AppCompatActivity).lifecycle)
+                .asCustom(view)
+                .show()
+            con.invokeOnCancellation {
+                view.dismiss()
             }
         }
     }
+}
 ```

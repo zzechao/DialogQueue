@@ -17,13 +17,6 @@ ext {
     PUBLISH_VERSION = '1.0.2.1'
 }
 
-//--- 修改配置二 ---
-ext["signing.keyId"] = 'B323A9C8'
-ext["signing.password"] = '12345678'
-ext["signing.secretKeyRingFile"] = 'D:\\zhouzechao_0xB323A9C8_SECRET.gpg'
-ext["ossrhUsername"] = 'zhouzechao10'
-ext["ossrhPassword"] = '&Zzc84128861'
-
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
     println "Found secret props file, loading props"
